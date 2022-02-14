@@ -1,6 +1,7 @@
 node_modules
 .idea
-
+next-frontend/node_modules
+next-frontend/.next
 #Hardhat files
 cache
 artifacts

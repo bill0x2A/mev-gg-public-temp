@@ -25,8 +25,14 @@ async function main() {
 
   console.log("Token address:", token.address);
 
-  // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(token);
+  const FomoOE = await hre.ethers.getContractFactory("FomoOE");
+  const fomoOE = await FomoOE.deploy();
+  await fomoOE.deployed();
+  console.log("FomoOE deployed to:", fomoOE.address);
+  
+
+    // We also save the contract's artifacts and address in the frontend directory
+    saveNextFrontendFiles(token, fomoOE);
 }
 
 function saveFrontendFiles(token) {
@@ -40,6 +46,38 @@ function saveFrontendFiles(token) {
   fs.writeFileSync(
     contractsDir + "/contract-address.json",
     JSON.stringify({ Token: token.address }, undefined, 2)
+  );
+
+  const TokenArtifact = artifacts.readArtifactSync("Token");
+
+  fs.writeFileSync(
+    contractsDir + "/Token.json",
+    JSON.stringify(TokenArtifact, null, 2)
+  );
+}
+
+function saveNextFrontendFiles(token, fomoOE) {
+  const fs = require("fs");
+  const contractsDir = __dirname + "/../next-frontend/src/contracts";
+
+  if (!fs.existsSync(contractsDir)) {
+    fs.mkdirSync(contractsDir);
+  }
+
+  fs.writeFileSync(
+    contractsDir + "/contract-address.json",
+    JSON.stringify({ Token: token.address }, undefined, 2)
+  );
+  fs.writeFileSync(
+    contractsDir + "/fomo-contract-address.json",
+    JSON.stringify({ FomoOE: fomoOE.address }, undefined, 2)
+  );
+
+  const FomoOEArtifact = artifacts.readArtifactSync("FomoOE");
+
+  fs.writeFileSync(
+    contractsDir + "/FomoOE.json",
+    JSON.stringify(FomoOEArtifact, null, 2)
   );
 
   const TokenArtifact = artifacts.readArtifactSync("Token");
