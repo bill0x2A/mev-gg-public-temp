@@ -73,6 +73,7 @@ describe("FomoOE contract", function () {
       expect(await hardhatFomoOE.keyPurchases()).to.equal(1);
       newKeyPrice = await hardhatFomoOE.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice*1.01);
+      console.log(await ethers.provider.estimateGas(hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice*1.01 })))
     });
   });
 });

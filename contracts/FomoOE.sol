@@ -87,6 +87,7 @@ contract FomoOE {
      * the winner will be the address who gets included FIRST in the game ending block.
     */
     function purchaseKeys(uint _amount) public payable isHuman() {
+        @start<Purchase-keys>
         /// @notice Incase the game has a slow start (no players), the first 5 key purchases set the clock to 24 hours. 
         if (totalKeys == 0 || keyPurchases < 5) {
             letTheGamesBegin();
@@ -149,6 +150,8 @@ contract FomoOE {
         keyPurchases += 1;
         winning = msg.sender;
         emit keysPurchased(_amount, winning);
+    @end
+
     } 
     /**
      * @dev returns which address is currently winning. 
