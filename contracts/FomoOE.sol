@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 /**
  * @title A rugpull opportunity for anyone
 */
-contract FomoOE {
+contract MevGG {
     address public developer;
     uint public developerOnePercent;
     uint public giveToDeveloper;
@@ -83,7 +83,7 @@ contract FomoOE {
         } 
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
         require(getTimeLeft() > 0, "there is already a winner");
-        console.log(getTimeLeft());
+        // console.log(getTimeLeft());
         /** 
          * @dev Key price can only increase once per block. Without this if/else
          * statement, there could only be one key purchase per block.
@@ -106,7 +106,7 @@ contract FomoOE {
         divPool += gameShare - floor; 
         divTracker[msg.sender]._keyBalance += _amount;
         totalKeys += _amount;
-        console.log(totalKeys);
+        // console.log(totalKeys);
         if (_amount * increment > startTime - (totalTime-block.timestamp)) {
             letTheGamesBegin();
         } else {
@@ -157,7 +157,7 @@ contract FomoOE {
             tempNumerator = divTracker[msg.sender]._keyBalance * divPool;
             tempUserWithdrawAmount = tempNumerator/totalKeys - divTracker[msg.sender]._withdrawnAmount;
             divTracker[msg.sender]._withdrawnAmount += tempUserWithdrawAmount;
-        }  
+        }
         require(tempUserWithdrawAmount > 0, "You have no divvies to claim");
         to.transfer(tempUserWithdrawAmount);
     }
@@ -181,10 +181,9 @@ contract FomoOE {
         jackpot = 0;
     }
 
-    function whoWon(address _userAddress) public view returns(address winner){
-        if (getTimeLeft() == 0 && _userAddress == winning) {
-            winner = _userAddress;
-            return winner;
+    function whoWon() public view returns(address winner){
+        if (getTimeLeft() == 0) {
+            return winning;
         }
     }
     /**

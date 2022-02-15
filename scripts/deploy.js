@@ -25,10 +25,10 @@ async function main() {
 
   console.log("Token address:", token.address);
 
-  const FomoOE = await hre.ethers.getContractFactory("FomoOE");
-  const fomoOE = await FomoOE.deploy();
+  const MevGG = await hre.ethers.getContractFactory("MevGG");
+  const fomoOE = await MevGG.deploy();
   await fomoOE.deployed();
-  console.log("FomoOE deployed to:", fomoOE.address);
+  console.log("MevGG deployed to:", fomoOE.address);
   
 
     // We also save the contract's artifacts and address in the frontend directory
@@ -70,14 +70,14 @@ function saveNextFrontendFiles(token, fomoOE) {
   );
   fs.writeFileSync(
     contractsDir + "/fomo-contract-address.json",
-    JSON.stringify({ FomoOE: fomoOE.address }, undefined, 2)
+    JSON.stringify({ MevGG: fomoOE.address }, undefined, 2)
   );
 
-  const FomoOEArtifact = artifacts.readArtifactSync("FomoOE");
+  const MevGGArtifact = artifacts.readArtifactSync("MevGG");
 
   fs.writeFileSync(
-    contractsDir + "/FomoOE.json",
-    JSON.stringify(FomoOEArtifact, null, 2)
+    contractsDir + "/MevGG.json",
+    JSON.stringify(MevGGArtifact, null, 2)
   );
 
   const TokenArtifact = artifacts.readArtifactSync("Token");

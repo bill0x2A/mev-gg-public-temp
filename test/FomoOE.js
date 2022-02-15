@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("FomoOE contract", function () {
+describe("MevGG contract", function () {
   // Mocha has four functions that let you hook into the the test runner's
   // lifecyle. These are: `before`, `beforeEach`, `after`, `afterEach`.
 
@@ -11,8 +11,8 @@ describe("FomoOE contract", function () {
   // A common pattern is to declare some variables, and assign them in the
   // `before` and `beforeEach` callbacks.
 
-  let FomoOE;
-  let hardhatFomoOE;
+  let MevGG;
+  let hardhatMevGG;
   let owner;
   let addr1;
   let addr2;
@@ -28,15 +28,15 @@ describe("FomoOE contract", function () {
   // time. It receives a callback, which can be async.
   beforeEach(async function () {
     // Get the ContractFactory and Signers here.
-    FomoOE = await ethers.getContractFactory("FomoOE");
+    MevGG = await ethers.getContractFactory("MevGG");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
-    hardhatFomoOE = await FomoOE.deploy(startTime1, increment1, initialKeyPrice);
+    hardhatMevGG = await MevGG.deploy(startTime1, increment1, initialKeyPrice);
 
     // We can interact with the contract by calling `hardhatToken.method()`
-    await hardhatFomoOE.deployed();
+    await hardhatMevGG.deployed();
   });
 
   // You can nest describe calls to create subsections.
@@ -51,89 +51,89 @@ describe("FomoOE contract", function () {
 
       // This test expects the owner variable stored in the contract to be equal
       // to our Signer's owner.
-      expect(await hardhatFomoOE.developer()).to.equal(owner.address);
+      expect(await hardhatMevGG.developer()).to.equal(owner.address);
     });
 
     it("Total number of keys purchased should equal 0", async function () {
-      expect(await hardhatFomoOE.keyPurchases()).to.equal(0);
+      expect(await hardhatMevGG.keyPurchases()).to.equal(0);
     });
     it("Total time left should be 86400", async function () {
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(86400);
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(86400);
     });
   });
 
   describe("Playing the game", function () {
     it("Should purchase a key", async function () {
-      keyPrice = await hardhatFomoOE.keyPrice();
+      keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
-      buyTx = await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.keyPurchases()).to.equal(1);
-      newKeyPrice = await hardhatFomoOE.keyPrice();
+      buyTx = await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
+      newKeyPrice = await hardhatMevGG.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice);
     });
     it("Should purchase another key", async function () {
-      keyPrice = await hardhatFomoOE.keyPrice();
+      keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.keyPurchases()).to.equal(1);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
     });
     it("Should purchase 2 keys", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(2);
-      newKeyPrice = await hardhatFomoOE.keyPrice();
+      await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
+      expect(await hardhatMevGG.totalKeys()).to.equal(2);
+      newKeyPrice = await hardhatMevGG.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(5, { value: keyPrice.mul(5) });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(7);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(10, { value: keyPrice.mul(10) });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(17);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(5, { value: keyPrice.mul(5) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(7);
+      await hardhatMevGG.connect(addr2).purchaseKeys(10, { value: keyPrice.mul(10) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(17);
+      await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
     });
     it("Should update winning", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(1);
-      expect(await hardhatFomoOE.getWinner()).to.equal(addr2.address);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(2);
-      expect(await hardhatFomoOE.getWinner()).to.equal(addr1.address);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
+      expect(await hardhatMevGG.getWinner()).to.equal(addr2.address);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.totalKeys()).to.equal(2);
+      expect(await hardhatMevGG.getWinner()).to.equal(addr1.address);
     });
     it("Should not update clock before 5 purchases", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(86400);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(86400);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(86400);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(86400);
     });
     it("Should update clock after 5 purchases", async function () {
       console.log(await ethers.provider.getBlockNumber());
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1);
       console.log(await ethers.provider.getBlockNumber());
-      await hardhatFomoOE.connect(addr2).incrementCounter();
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1-1);
+      await hardhatMevGG.connect(addr2).incrementCounter();
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1-1);
       console.log(await ethers.provider.getBlockNumber());
-      await hardhatFomoOE.connect(addr2).incrementCounter();
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1-2);
+      await hardhatMevGG.connect(addr2).incrementCounter();
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1-2);
       let counter = 0;
       for (let i=0; i < 30; i++) {
-        await hardhatFomoOE.connect(addr2).incrementCounter();
+        await hardhatMevGG.connect(addr2).incrementCounter();
         counter += 1;
       }
       console.log(counter);
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1-32);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime1-3);
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1-32);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1-3);
     });
   });
 });
 
-describe("FomoOE sped up", function () {
+describe("MevGG sped up", function () {
   // Mocha has four functions that let you hook into the the test runner's
   // lifecyle. These are: `before`, `beforeEach`, `after`, `afterEach`.
 
@@ -143,8 +143,8 @@ describe("FomoOE sped up", function () {
   // A common pattern is to declare some variables, and assign them in the
   // `before` and `beforeEach` callbacks.
 
-  let FomoOE;
-  let hardhatFomoOE;
+  let MevGG;
+  let hardhatMevGG;
   let owner;
   let addr1;
   let addr2;
@@ -160,15 +160,15 @@ describe("FomoOE sped up", function () {
   // time. It receives a callback, which can be async.
   beforeEach(async function () {
     // Get the ContractFactory and Signers here.
-    FomoOE = await ethers.getContractFactory("FomoOE");
+    MevGG = await ethers.getContractFactory("MevGG");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
-    hardhatFomoOE = await FomoOE.deploy(startTime2, increment2, initialKeyPrice);
+    hardhatMevGG = await MevGG.deploy(startTime2, increment2, initialKeyPrice);
 
     // We can interact with the contract by calling `hardhatToken.method()`
-    await hardhatFomoOE.deployed();
+    await hardhatMevGG.deployed();
   });
 
   // You can nest describe calls to create subsections.
@@ -183,124 +183,168 @@ describe("FomoOE sped up", function () {
 
       // This test expects the owner variable stored in the contract to be equal
       // to our Signer's owner.
-      expect(await hardhatFomoOE.developer()).to.equal(owner.address);
+      expect(await hardhatMevGG.developer()).to.equal(owner.address);
     });
 
     it("Total number of keys purchased should equal 0", async function () {
-      expect(await hardhatFomoOE.keyPurchases()).to.equal(0);
+      expect(await hardhatMevGG.keyPurchases()).to.equal(0);
     });
     it("Total time left should be equal to start time", async function () {
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2);
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
     });
   });
 
   describe("Playing the game", function () {
     it("Should purchase a key", async function () {
-      keyPrice = await hardhatFomoOE.keyPrice();
+      keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
-      buyTx = await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.keyPurchases()).to.equal(1);
-      newKeyPrice = await hardhatFomoOE.keyPrice();
+      buyTx = await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
+      newKeyPrice = await hardhatMevGG.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice);
     });
     it("Should purchase another key", async function () {
-      keyPrice = await hardhatFomoOE.keyPrice();
+      keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.keyPurchases()).to.equal(1);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
     });
     it("Should purchase 2 keys", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(2);
-      newKeyPrice = await hardhatFomoOE.keyPrice();
+      await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(2);
+      newKeyPrice = await hardhatMevGG.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(5, { value: keyPrice.mul(5) });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(7);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(10, { value: keyPrice.mul(10) });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(17);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
+      await hardhatMevGG.connect(addr2).purchaseKeys(5, { value: keyPrice.mul(5) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(7);
+      await hardhatMevGG.connect(addr2).purchaseKeys(10, { value: keyPrice.mul(10) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(17);
+      await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
+      await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
     });
     it("Should update winning", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(1);
-      expect(await hardhatFomoOE.getWinner()).to.equal(addr2.address);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.totalKeys()).to.equal(2);
-      expect(await hardhatFomoOE.getWinner()).to.equal(addr1.address);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
+      expect(await hardhatMevGG.getWinner()).to.equal(addr2.address);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.totalKeys()).to.equal(2);
+      expect(await hardhatMevGG.getWinner()).to.equal(addr1.address);
     });
     it("Should not update clock before 5 purchases", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
     });
     it("Should update clock after 5 purchases", async function () {
       console.log(await ethers.provider.getBlockNumber());
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2);
-      await hardhatFomoOE.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
       console.log(await ethers.provider.getBlockNumber());
-      await hardhatFomoOE.connect(addr2).incrementCounter();
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2-1);
+      await hardhatMevGG.connect(addr2).incrementCounter();
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2-1);
       console.log(await ethers.provider.getBlockNumber());
-      await hardhatFomoOE.connect(addr2).incrementCounter();
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2-2);
+      await hardhatMevGG.connect(addr2).incrementCounter();
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2-2);
       let counter = 0;
       for (let i=0; i < 30; i++) {
-        await hardhatFomoOE.connect(addr2).incrementCounter();
+        await hardhatMevGG.connect(addr2).incrementCounter();
         counter += 1;
       }
       console.log(counter);
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2-2-counter);
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(startTime2-3-counter+increment2);
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2-2-counter);
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2-3-counter+increment2);
     });
     it("Should end game", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
       let counter = 0;
       for (let i=0; i < startTime2; i++) {
-        await hardhatFomoOE.connect(addr2).incrementCounter();
+        await hardhatMevGG.connect(addr2).incrementCounter();
         counter += 1;
       }
       console.log(counter);
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(0);
-      await expect(hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice })).to.be.reverted;
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(0);
+      await expect(hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice })).to.be.reverted;
     });
     it("Winner can get jackpot", async function () {
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
-      await hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
       let counter = 0;
       for (let i=0; i < startTime2; i++) {
-        await hardhatFomoOE.connect(addr2).incrementCounter();
+        await hardhatMevGG.connect(addr2).incrementCounter();
         counter += 1;
       }
       console.log(counter);
-      expect(await hardhatFomoOE.getTimeLeft()).to.equal(0);
-      await expect(hardhatFomoOE.connect(addr2).purchaseKeys(1, { value: keyPrice })).to.be.reverted;
+      expect(await hardhatMevGG.getTimeLeft()).to.equal(0);
+      await expect(hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice })).to.be.reverted;
       winnerBalanceBeforeClaim = await ethers.provider.getBalance(addr2.address);
-      jackpot = await hardhatFomoOE.jackpot()
+      jackpot = await hardhatMevGG.jackpot()
       console.log(ethers.utils.formatEther(winnerBalanceBeforeClaim), ethers.utils.formatEther(jackpot));
       console.log(ethers.utils.formatEther(keyPrice));
       console.log(ethers.utils.formatEther(keyPrice.mul(10000 * 5 * .495).div(10000)));
-      await hardhatFomoOE.connect(addr2).jackpotPayout();
+      await expect(hardhatMevGG.connect(addr1).jackpotPayout()).to.be.reverted;
+      await hardhatMevGG.connect(addr2).jackpotPayout();
       winnerBalanceAfterClaim = await ethers.provider.getBalance(addr2.address);
       expectedWinnerBalance = winnerBalanceBeforeClaim.add(jackpot);
       console.log(ethers.utils.formatEther(winnerBalanceAfterClaim), ethers.utils.formatEther(expectedWinnerBalance));
       expect(await ethers.provider.getBalance(addr2.address)).to.be.closeTo(winnerBalanceBeforeClaim.add(jackpot), ethers.utils.parseEther("0.001"));
+      expect(await hardhatMevGG.jackpot()).to.equal(0);
+      await expect(hardhatMevGG.connect(addr2).jackpotPayout()).to.be.reverted;
+      expect(await hardhatMevGG.whoWon()).to.equal(addr2.address);
+    });
+    it("Withdraw dividends after jackpot claimed", async function () {
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      let counter = 0;
+      for (let i=0; i < startTime2; i++) {
+        await hardhatMevGG.connect(addr2).incrementCounter();
+        counter += 1;
+      }
+      jackpot = await hardhatMevGG.jackpot()
+      console.log(jackpot);
+      await expect(hardhatMevGG.connect(addr1).jackpotPayout()).to.be.reverted;
+      await hardhatMevGG.connect(addr2).jackpotPayout();
+      expect(await hardhatMevGG.jackpot()).to.equal(0);
+      await expect(hardhatMevGG.connect(addr2).jackpotPayout()).to.be.reverted;
+      addr1Balance = await ethers.provider.getBalance(addr1.address);
+      dividendsAddr1 = await hardhatMevGG.connect(addr1).updateDivvies(addr1.address);
+      console.log(ethers.utils.formatEther(dividendsAddr1));
+      await hardhatMevGG.connect(addr1).withdrawDivvies();
+      expect(await ethers.provider.getBalance(addr1.address)).to.be.closeTo(addr1Balance.add(dividendsAddr1), ethers.utils.parseEther("0.0001"));
+    });
+    it("Withdraw dividends before jackpot claimed", async function () {
+      await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      addr1Balance = await ethers.provider.getBalance(addr1.address);
+      addr2Balance = await ethers.provider.getBalance(addr2.address);
+      dividendsAddr1 = await hardhatMevGG.connect(addr1).updateDivvies(addr1.address);
+      dividendsAddr2 = await hardhatMevGG.connect(addr1).updateDivvies(addr2.address);
+      console.log(ethers.utils.formatEther(dividendsAddr1));
+      console.log(ethers.utils.formatEther(dividendsAddr2));
+      await hardhatMevGG.connect(addr1).withdrawDivvies();
+      await hardhatMevGG.connect(addr2).withdrawDivvies();
+      expect(await ethers.provider.getBalance(addr1.address)).to.be.closeTo(addr1Balance.add(dividendsAddr1), ethers.utils.parseEther("0.0001"));
+      expect(await ethers.provider.getBalance(addr2.address)).to.be.closeTo(addr2Balance.add(dividendsAddr2), ethers.utils.parseEther("0.0001"));
     });
   });
 });
