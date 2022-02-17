@@ -1,7 +1,7 @@
 {
-  "name": "hardhat-hackathon-boilerplate",
+  "name": "mev.gg repository",
   "version": "1.0.0",
-  "description": "A boilerplate repository to get you started with Hardhat and Ethereum development",
+  "description": "An MEV game",
   "directories": {
     "test": "test"
   },
@@ -33,6 +33,7 @@
     "hardhat-gas-reporter": "^1.0.7"
   },
   "dependencies": {
-    "@primitivefi/hardhat-marmite": "^0.0.4"
+    "@rari-capital/solmate": "^6.2.0",
+    "dotenv": "^16.0.0"
   }
 }

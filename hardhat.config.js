@@ -1,12 +1,13 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
-require('@primitivefi/hardhat-marmite');
 require("hardhat-gas-reporter");
+require('dotenv').config()
 
 // The next line is part of the sample project, you don't need it in your
 // project. It imports a Hardhat task definition, that can be used for
 // testing the frontend.
 require("./tasks/faucet");
+
 
 module.exports = {
   solidity: {
@@ -19,12 +20,11 @@ module.exports = {
     }
   },
   networks: {
-    // hardhat: {
-    //   mining: {
-    //    auto: false,
-    //     interval: 5
-    //   }
-    // } 
+    ropsten: {
+      url: process.env.ROPSTEN_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
   },
   gasReporter: {
     currency: 'USD',
