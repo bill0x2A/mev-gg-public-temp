@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useAccount } from 'wagmi'
 
-import { Account, Connect, NetworkSwitcher, TokenBalance, Fomo, FomoBuyKey } from '../components'
+import { Account, Connect, NetworkSwitcher, Balance, Fomo, FomoBuyKey } from '../components'
 
 const Page = () => {
   const [{ data: accountData }] = useAccount()
@@ -11,10 +11,9 @@ const Page = () => {
       <>
         <Account />
         <NetworkSwitcher />
-        <Fomo />
-        <TokenBalance />
-        <FomoBuyKey />
-
+        <Balance/>
+        <Fomo/>
+        <FomoBuyKey/>
       </>
     )
 

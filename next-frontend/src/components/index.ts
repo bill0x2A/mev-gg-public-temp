@@ -1,6 +1,6 @@
 export { Account } from './Account'
 export { Connect } from './Connect'
 export { NetworkSwitcher } from './NetworkSwitcher'
-export { TokenBalance } from './TokenBalance'
+export { Balance } from './Balance'
 export { Fomo } from './Fomo'
 export { FomoBuyKey } from './FomoBuyKey'

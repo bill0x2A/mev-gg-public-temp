@@ -1,7 +1,8 @@
 import { useContractWrite } from 'wagmi'
 import contractAddress from "../contracts/fomo-contract-address.json";
-import MevGGArtifact from "../contracts/fomoOE.json";
+import MevGGArtifact from "../contracts/MevGG.json";
 import { useIsMounted } from '../hooks'
+import { ethers } from "ethers";
 
 export const FomoBuyKey = () => {
     const isMounted = useIsMounted()
@@ -10,16 +11,21 @@ export const FomoBuyKey = () => {
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
     },
-        "purchaseKeys")
+        "purchaseKeys",
+    {
+        args: [1],
+        overrides: { value: ethers.utils.parseEther(".05")}
+    })
 
     if (loading) return <div>Fetching time left...</div>
-    if (error) return <div>Error fetching time left</div>
+    if (error) return <div>Error buying key {JSON.stringify(error)}</div>
     console.log(data)
+    console.log(error)
     return (
         <div>
             <div>
                 <button
-                onClick={() => write({args: [1]})}
+                onClick={() => write()}
             >
                 {isMounted ? "Buy key" : "Mounting"}
                 {loading && '…'}
