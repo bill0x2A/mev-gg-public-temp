@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-etherscan");
 require("hardhat-gas-reporter");
 require('dotenv').config()
 
@@ -22,6 +23,11 @@ module.exports = {
   networks: {
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
