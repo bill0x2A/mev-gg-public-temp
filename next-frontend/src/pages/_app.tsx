@@ -37,7 +37,7 @@ const connectors = ({ chainId }: ConnectorsConfig) => {
       chains,
       options: {
         appName: 'wagmi',
-        jsonRpcUrl: `${rpcUrl}/${infuraId}`,
+        jsonRpcUrl: `${rpcUrl}/${alchemyId}`,
       },
     }),
   ]
