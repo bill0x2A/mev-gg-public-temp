@@ -5,8 +5,8 @@ import * as dayjs from 'dayjs'
 import * as duration from 'dayjs/plugin/duration' // import plugin
 import * as relativeTime from 'dayjs/plugin/relativeTime' // import plugin
 
-dayjs.extend(duration)
-dayjs.extend(relativeTime)
+dayjs.extend(duration.default)
+dayjs.extend(relativeTime.default)
 
 
 export const Fomo = () => {
