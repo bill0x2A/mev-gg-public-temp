@@ -1,35 +1,36 @@
 import * as React from 'react'
-import { useConnect } from 'wagmi'
+import { useConnect, useAccount } from 'wagmi'
+import { Box, Button } from '@chakra-ui/react'; 
 
-import { useIsMounted } from '../hooks'
+import { useError, useIsMounted } from '../hooks'
 
 export const Connect = () => {
   const isMounted = useIsMounted()
   const [
     {
-      data: { connector, connectors },
+      data: { connectors },
       error,
       loading,
     },
     connect,
   ] = useConnect()
 
+  useError(error);
+
   return (
-    <div>
-      <div>
-        {connectors.map((x) => (
-          <button
-            disabled={isMounted && !x.ready}
-            key={x.name}
-            onClick={() => connect(x)}
+      <Box>
+        {connectors.map((connector) => (
+          <Button
+            disabled={isMounted && !connector.ready}
+            key={connector.name}
+            marginLeft={'5px'}
+            onClick={() => connect(connector)}
           >
-            {x.id === 'injected' ? (isMounted ? x.name : x.id) : x.name}
-            {isMounted && !x.ready && ' (unsupported)'}
-            {loading && x.name === connector?.name && '…'}
-          </button>
+            {connector.id === 'injected' ? (isMounted ? connector.name : connector.id) : connector.name}
+            {isMounted && !connector.ready && ' (unsupported)'}
+            {loading && connector.name === connector?.name && '…'}
+          </Button>
         ))}
-      </div>
-      <div>{error && (error?.message ?? 'Failed to connect')}</div>
-    </div>
+      </Box>
   )
 }

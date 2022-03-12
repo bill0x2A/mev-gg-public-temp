@@ -1,23 +1,33 @@
 import * as React from 'react'
 import { useAccount } from 'wagmi'
+import {
+  Flex,
+  Center,
+} from '@chakra-ui/react';
 
-import { Account, Connect, NetworkSwitcher, Balance, Fomo, FomoBuyKey } from '../components'
+import {
+  Card,
+  Navbar
+} from '../components'
 
 const Page = () => {
-  const [{ data: accountData }] = useAccount()
+  const [{ data: accountData }] = useAccount();
 
-  if (accountData?.address)
-    return (
-      <>
-        <Account />
-        <NetworkSwitcher />
-        <Balance/>
-        <Fomo/>
-        <FomoBuyKey/>
+  return (
+    <>
+      <Navbar/>
+      {accountData?.address
+        ? <Flex
+          my='20px'
+          minHeight={'calc(100vh - 100px)'}
+          justifyContent='center'>
+          <Center>
+            <Card/>
+          </Center>
+        </Flex>
+        : null}
       </>
-    )
-
-  return <Connect />
+  );
 }
 
 export default Page
