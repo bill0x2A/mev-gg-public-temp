@@ -8,6 +8,9 @@ import { Connector, Provider, chain, defaultChains } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
+import { ChakraProvider } from '@chakra-ui/react';
+import { ToastProvider } from 'react-toast-notifications';
+import theme from '../theme';
 
 // Get environment variables
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID as string
@@ -64,18 +67,25 @@ const webSocketProvider = ({ chainId }: ProviderConfig) =>
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
-    <Provider
-      autoConnect
-      connectors={connectors}
-      provider={provider}
-      webSocketProvider={webSocketProvider}
-    >
+    <>
       <NextHead>
-        <title>wagmi</title>
+        <title>MEV.GG</title>
       </NextHead>
-
-      <Component {...pageProps} />
-    </Provider>
+      <Provider
+        autoConnect
+        connectors={connectors}
+        provider={provider}
+        webSocketProvider={webSocketProvider}>
+        <ToastProvider
+            autoDismiss
+            autoDismissTimeout={6000}
+            placement="bottom-right">
+          <ChakraProvider theme={theme}>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        </ToastProvider>
+      </Provider>
+    </>
   )
 }
 
