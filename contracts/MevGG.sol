@@ -32,6 +32,7 @@ contract MevGG {
         uint _divBalance;
         uint _withdrawnAmount;
     }
+
     mapping(address => Divvies) public divTracker;
 
     event keysPurchased(uint _amount, address _winning);
@@ -89,10 +90,10 @@ contract MevGG {
      * @notice If multiple key purchases are made a the end of the game, 
      * the winner will be the address who gets included FIRST in the game ending block.
     */
-    function purchaseKeys(uint _amount) public payable {
+    function purchaseKeys(uint _numKeys) public payable {
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
         if (getTimeLeft() == 0) revert WinnerAlreadyDeclared();
-        if (msg.value != keyPrice*_amount) revert InsufficientFunds();
+        if (msg.value != keyPrice*_numKeys) revert InsufficientFunds();
 
         uint devShareNumerator = msg.value*100;
         uint devShare = devShareNumerator/10000;
@@ -101,17 +102,17 @@ contract MevGG {
         developerOnePercent += devShare;
         jackpot += floor;
         divPool += gameShare - floor; 
-        divTracker[msg.sender]._keyBalance += _amount;
-        totalKeys += _amount;
+        divTracker[msg.sender]._keyBalance += _numKeys;
+        totalKeys += _numKeys;
         /// @notice In case the game has a slow start (no players), or the clock goes over 24 hours, set the clock to 24 hours.
-        if (_amount * increment > startTime - (totalTime-block.timestamp) || (totalKeys < 5)) {
+        if (_numKeys * increment > startTime - (totalTime-block.timestamp) || (totalKeys < 5)) {
             letTheGamesBegin();
         } else {
-            totalTime += _amount * increment;
+            totalTime += _numKeys * increment;
         }
 
         winning = msg.sender;
-        emit keysPurchased(_amount, winning);
+        emit keysPurchased(_numKeys, winning);
 
     } 
     /**
@@ -130,7 +131,7 @@ contract MevGG {
 
     /**
      * @notice Tracks each player's claimable dividends.
-     * EXAMPLE: (UserKeys/TotalKeys)*TotalDividendPool - UserPreviousWithdrawls
+     * EXAMPLE: (UserKeys/TotalKeys)*TotalDividendPool - UserPreviousWithdrawals
      * The ratio of a user's keys to all keys purchased determines the proportion of the entire
      * dividend pool the user is entitled to. Subtracting any amount the user has already withdrawn.
     */
@@ -158,7 +159,7 @@ contract MevGG {
      * @notice Criteria to claim jackpot:
      * 1.) The game must be over (i.e. timer at zero).
      * 2.) User must be the winner (only winner can withdraw jackpot).
-     * 3.) Jackpot must have a non zero balance (I can't blame you for trying to withdraw it twice).
+     * 3.) Jackpot must have a non-zero balance.
     */
     function jackpotPayout() public {
         if (getTimeLeft() != 0) revert GameActive();
@@ -180,7 +181,7 @@ contract MevGG {
         revert GameActive();
     }
     /**
-     * @notice The game must be over and then I can call this function.
+     * @notice The developer can call this function IFF the game is over.
     */
     function developerOnePercentAllocation(address _developerAddress) public {
         if (msg.sender != developer) revert NotDeveloper();
