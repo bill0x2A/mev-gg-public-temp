@@ -5,12 +5,10 @@ pragma solidity ^0.8.10;
 import "hardhat/console.sol";
 
 /**
- * @title A rugpull opportunity for anyone
+ * @title A MEV game
 */
 contract MevGG {
     address public developer;
-    uint public developerOnePercent;
-    uint public giveToDeveloper;
     uint public giveToJackpot;
     uint public startTime;
     uint public totalTime;
@@ -27,6 +25,8 @@ contract MevGG {
     uint public divPool;
     uint public jackpot;
     uint public counter;
+    uint public developerOnePercent;
+    uint public giveToDeveloper;
     
     struct Divvies {
         uint _keyBalance;
@@ -36,7 +36,22 @@ contract MevGG {
     mapping(address => Divvies) public divTracker;
 
     event keysPurchased(uint _amount, address _winning);
-    
+
+    /// @notice Thrown when trying to purchase keys after the game is over
+    error WinnerAlreadyDeclared();
+    /// @notice Thrown if player does not have enough ETH for their purchase
+	error InsufficientFunds();
+    /// @notice Thrown if player does not have any dividends to claim
+	error NoDivviesToClaim();
+    /// @notice Thrown if jackpot claimed while game is still active
+	error GameActive();
+    /// @notice Thrown if jackpot is empty when claimed
+	error JackpotEmpty();
+    /// @notice Thrown if jackpot is claimed by a player that is not the winner
+	error NotWinner();
+    /// @notice Thrown if developer percentage is claimed by a player that is not the developer
+	error NotDeveloper();
+
     constructor(uint _startTime, uint _increment, uint _keyPrice) {
         /**
         * @notice developer address is used to withdraw 1% depending on the outcome
@@ -82,7 +97,7 @@ contract MevGG {
             letTheGamesBegin();
         } 
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
-        require(getTimeLeft() > 0, "there is already a winner");
+        if (getTimeLeft() == 0) revert WinnerAlreadyDeclared();
         // console.log(getTimeLeft());
         /** 
          * @dev Key price can only increase once per block. Without this if/else
@@ -95,7 +110,7 @@ contract MevGG {
         */
         // console.log("Ether sent", msg.value);
         // console.log("Ether cost", keyPrice*_amount);
-        require(msg.value >= keyPrice*_amount, "Not enough to buy the key(s)");
+        if (msg.value != keyPrice*_amount) revert InsufficientFunds();
 
         uint devShareNumerator = msg.value*100;
         uint devShare = devShareNumerator/10000;
@@ -143,22 +158,20 @@ contract MevGG {
         return tempUserWithdrawAmount;
     }
     /**
-     * @dev Contains the same 'on-the-fly' calculations as the updateDivvies function,
-     * as well as setting that user's withdrawn amount.
-     * Ah crap, I've been using "withdraw" instead of "withdrawal" throughout the code.
+     * @dev Contains the same 'on-the-fly' calculations as the updateDivvies function
     */
     function withdrawDivvies() public {
         address payable to = payable(msg.sender);
         uint tempUserWithdrawAmount;
         uint tempNumerator;
         if (totalKeys == 0 ) {
-            tempUserWithdrawAmount = 0;
+            revert NoDivviesToClaim();
         } else {
             tempNumerator = divTracker[msg.sender]._keyBalance * divPool;
             tempUserWithdrawAmount = tempNumerator/totalKeys - divTracker[msg.sender]._withdrawnAmount;
             divTracker[msg.sender]._withdrawnAmount += tempUserWithdrawAmount;
         }
-        require(tempUserWithdrawAmount > 0, "You have no divvies to claim");
+        if (tempUserWithdrawAmount <= 0) revert NoDivviesToClaim();
         to.transfer(tempUserWithdrawAmount);
     }
 
@@ -169,9 +182,9 @@ contract MevGG {
      * 3.) Jackpot must have a non zero balance (I can't blame you for trying to withdraw it twice).
     */
     function jackpotPayout() public {
-        require(getTimeLeft() == 0, "game is still in play");
-        require(jackpot > 0, "No money in jackpot");
-        require(msg.sender == winning, "you are not the winner");
+        if (getTimeLeft() != 0) revert GameActive();
+        if (jackpot == 0) revert JackpotEmpty();
+        if (msg.sender != winning) revert NotWinner();
         address payable to = payable(winning);
         to.transfer(jackpot);
         /**
@@ -185,13 +198,14 @@ contract MevGG {
         if (getTimeLeft() == 0) {
             return winning;
         }
+        revert GameActive();
     }
     /**
      * @notice The game must be over and then I can call this function.
     */
     function developerOnePercentAllocation(address _developerAddress) public {
-        require(msg.sender == developer, "you aren't the developer of this contract.");
-        require(getTimeLeft() == 0, "game is still in play");
+        if (msg.sender != developer) revert NotDeveloper();
+        if (getTimeLeft() != 0) revert GameActive();
         address payable to = payable(_developerAddress);
         to.transfer(developerOnePercent);
         developerOnePercent = 0;
