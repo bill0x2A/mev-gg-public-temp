@@ -134,38 +134,29 @@ contract MevGG {
     }
 
     /**
-     * @notice Tracks each player's dividends.
+     * @notice Tracks each player's claimable dividends.
      * EXAMPLE: (UserKeys/TotalKeys)*TotalDividendPool - UserPreviousWithdrawls
      * The ratio of a user's keys to all keys purchased determines the proportion of the entire
      * dividend pool the user is entitled to. Subtracting any amount the user has already withdrawn.
     */
-    function updateDivvies(address _userAddress) public view returns(uint) {
-        uint tempUserWithdrawalAmount;
-        uint tempNumerator;
+    function getClaimableDivvies(address _userAddress) public view returns(uint) {
         if (totalKeys == 0 ) {
-            tempUserWithdrawalAmount = 0;
-        } else {
-            tempNumerator = divTracker[_userAddress]._keyBalance * divPool;
-            tempUserWithdrawalAmount = tempNumerator/totalKeys - divTracker[_userAddress]._withdrawnAmount;
-        }  
-        return tempUserWithdrawalAmount;
+            return 0;
+        }
+        uint claimableDivvies;
+        uint tempNumerator;
+        tempNumerator = divTracker[_userAddress]._keyBalance * divPool;
+        claimableDivvies = tempNumerator/totalKeys - divTracker[_userAddress]._withdrawnAmount;
+        return claimableDivvies;
     }
     /**
-     * @dev Contains the same 'on-the-fly' calculations as the updateDivvies function
+     * @dev Withdraw caller's dividends
     */
     function withdrawDivvies() public {
+        uint claimableDivvies = getClaimableDivvies(msg.sender);
+        if (claimableDivvies <= 0) revert NoDivviesToClaim();
         address payable to = payable(msg.sender);
-        uint tempUserWithdrawalAmount;
-        uint tempNumerator;
-        if (totalKeys == 0 ) {
-            revert NoDivviesToClaim();
-        }
-        tempNumerator = divTracker[msg.sender]._keyBalance * divPool;
-        tempUserWithdrawalAmount = tempNumerator/totalKeys - divTracker[msg.sender]._withdrawnAmount;
-        divTracker[msg.sender]._withdrawnAmount += tempUserWithdrawalAmount;
-
-        if (tempUserWithdrawalAmount <= 0) revert NoDivviesToClaim();
-        to.transfer(tempUserWithdrawalAmount);
+        to.transfer(claimableDivvies);
     }
 
     /**
