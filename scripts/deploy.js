@@ -32,7 +32,7 @@ function saveNextFrontendFiles(mevGG) {
   }
 
   fs.writeFileSync(
-    contractsDir + "/fomo-contract-address.json",
+    contractsDir + "/mevgg-contract-address.json",
     JSON.stringify({ MevGG: mevGG.address }, undefined, 2)
   );
 

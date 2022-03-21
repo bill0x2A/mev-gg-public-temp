@@ -55,7 +55,7 @@ describe("MevGG contract", function () {
     });
 
     it("Total number of keys purchased should equal 0", async function () {
-      expect(await hardhatMevGG.keyPurchases()).to.equal(0);
+      expect(await hardhatMevGG.totalKeys()).to.equal(0);
     });
     it("Total time left should be 86400", async function () {
       expect(await hardhatMevGG.getTimeLeft()).to.equal(86400);
@@ -67,7 +67,7 @@ describe("MevGG contract", function () {
       keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
       buyTx = await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
       newKeyPrice = await hardhatMevGG.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice);
     });
@@ -75,7 +75,7 @@ describe("MevGG contract", function () {
       keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
       await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
     });
     it("Should purchase 2 keys", async function () {
       await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
@@ -187,7 +187,7 @@ describe("MevGG sped up", function () {
     });
 
     it("Total number of keys purchased should equal 0", async function () {
-      expect(await hardhatMevGG.keyPurchases()).to.equal(0);
+      expect(await hardhatMevGG.totalKeys()).to.equal(0);
     });
     it("Total time left should be equal to start time", async function () {
       expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime2);
@@ -199,7 +199,7 @@ describe("MevGG sped up", function () {
       keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
       buyTx = await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
       newKeyPrice = await hardhatMevGG.keyPrice();
       expect(newKeyPrice).to.equal(initialKeyPrice);
     });
@@ -207,7 +207,7 @@ describe("MevGG sped up", function () {
       keyPrice = await hardhatMevGG.keyPrice();
       expect(keyPrice).to.equal(initialKeyPrice);
       await hardhatMevGG.connect(addr1).purchaseKeys(1, { value: keyPrice });
-      expect(await hardhatMevGG.keyPurchases()).to.equal(1);
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
     });
     it("Should purchase 2 keys", async function () {
       await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: keyPrice.mul(2) });
@@ -324,7 +324,7 @@ describe("MevGG sped up", function () {
       expect(await hardhatMevGG.jackpot()).to.equal(0);
       await expect(hardhatMevGG.connect(addr2).jackpotPayout()).to.be.reverted;
       addr1Balance = await ethers.provider.getBalance(addr1.address);
-      dividendsAddr1 = await hardhatMevGG.connect(addr1).updateDivvies(addr1.address);
+      dividendsAddr1 = await hardhatMevGG.connect(addr1).getClaimableDivvies(addr1.address);
       console.log(ethers.utils.formatEther(dividendsAddr1));
       await hardhatMevGG.connect(addr1).withdrawDivvies();
       expect(await ethers.provider.getBalance(addr1.address)).to.be.closeTo(addr1Balance.add(dividendsAddr1), ethers.utils.parseEther("0.0001"));
@@ -337,8 +337,8 @@ describe("MevGG sped up", function () {
       await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
       addr1Balance = await ethers.provider.getBalance(addr1.address);
       addr2Balance = await ethers.provider.getBalance(addr2.address);
-      dividendsAddr1 = await hardhatMevGG.connect(addr1).updateDivvies(addr1.address);
-      dividendsAddr2 = await hardhatMevGG.connect(addr1).updateDivvies(addr2.address);
+      dividendsAddr1 = await hardhatMevGG.connect(addr1).getClaimableDivvies(addr1.address);
+      dividendsAddr2 = await hardhatMevGG.connect(addr1).getClaimableDivvies(addr2.address);
       console.log(ethers.utils.formatEther(dividendsAddr1));
       console.log(ethers.utils.formatEther(dividendsAddr2));
       await hardhatMevGG.connect(addr1).withdrawDivvies();
