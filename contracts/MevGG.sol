@@ -60,13 +60,13 @@ contract MevGG {
         startTime = _startTime;
         increment = _increment;
         keyPrice = _keyPrice;
+        totalTime = block.timestamp + startTime;
     }
 
     /**
      * @dev put 24 (or 86,400 seconds) hours on the clock to start the game
      */
     function letTheGamesBegin() private {
-        // console.log("Starting games");
         totalTime = block.timestamp + startTime;
     }
 
@@ -80,9 +80,8 @@ contract MevGG {
         }
         if (totalTime >= block.timestamp) {
             return totalTime - block.timestamp;
-        } else {
-            return 0;
         }
+        return 0;
     }
     /**
      * @dev holds a logic for key price increase, adding time per key,
@@ -91,10 +90,6 @@ contract MevGG {
      * the winner will be the address who gets included FIRST in the game ending block.
     */
     function purchaseKeys(uint _amount) public payable {
-        /// @notice Incase the game has a slow start (no players), the first 5 key purchases set the clock to 24 hours. 
-        if (totalKeys < 5) {
-            letTheGamesBegin();
-        } 
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
         if (getTimeLeft() == 0) revert WinnerAlreadyDeclared();
         if (msg.value != keyPrice*_amount) revert InsufficientFunds();
@@ -108,8 +103,8 @@ contract MevGG {
         divPool += gameShare - floor; 
         divTracker[msg.sender]._keyBalance += _amount;
         totalKeys += _amount;
-        // console.log(totalKeys);
-        if (_amount * increment > startTime - (totalTime-block.timestamp)) {
+        /// @notice In case the game has a slow start (no players), or the clock goes over 24 hours, set the clock to 24 hours.
+        if (_amount * increment > startTime - (totalTime-block.timestamp) || (totalKeys < 5)) {
             letTheGamesBegin();
         } else {
             totalTime += _amount * increment;
