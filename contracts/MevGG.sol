@@ -21,7 +21,6 @@ contract MevGG {
     uint public increment;
 
     uint public totalKeys;
-    uint public keyPurchases;
     uint public divPool;
     uint public jackpot;
     uint public counter;
@@ -93,23 +92,11 @@ contract MevGG {
     */
     function purchaseKeys(uint _amount) public payable {
         /// @notice Incase the game has a slow start (no players), the first 5 key purchases set the clock to 24 hours. 
-        if (totalKeys == 0 || keyPurchases < 5) {
+        if (totalKeys < 5) {
             letTheGamesBegin();
         } 
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
         if (getTimeLeft() == 0) revert WinnerAlreadyDeclared();
-        // console.log(getTimeLeft());
-        /** 
-         * @dev Key price can only increase once per block. Without this if/else
-         * statement, there could only be one key purchase per block.
-         * Example: Alice and Bob purchase keys at the exact same time, thus paying the
-         * same price for their keys. Both transactions get mined in the same block. Due to
-         * the sequential nature of transactions in the EVM, Alice's transaction gets processed,
-         * she gets her keys, and updates the key price. Bob's transaction gets processed next which
-         * fails because the key price has been updated by Alice, despite both paying the correct price. 
-        */
-        // console.log("Ether sent", msg.value);
-        // console.log("Ether cost", keyPrice*_amount);
         if (msg.value != keyPrice*_amount) revert InsufficientFunds();
 
         uint devShareNumerator = msg.value*100;
@@ -128,18 +115,24 @@ contract MevGG {
             totalTime += _amount * increment;
         }
 
-        keyPurchases += 1;
         winning = msg.sender;
         emit keysPurchased(_amount, winning);
 
     } 
     /**
      * @dev returns which address is currently winning. 
-     * I know this is redundant but it just needs to be here.
     */
     function getWinner() public view returns(address) {
         return winning;
     }
+
+    /**
+     * @dev returns which address is currently winning. 
+    */
+    function getTotalKeysPurchased() public view returns(uint) {
+        return totalKeys;
+    }
+
     /**
      * @notice Tracks each player's dividends.
      * EXAMPLE: (UserKeys/TotalKeys)*TotalDividendPool - UserPreviousWithdrawls
@@ -147,32 +140,32 @@ contract MevGG {
      * dividend pool the user is entitled to. Subtracting any amount the user has already withdrawn.
     */
     function updateDivvies(address _userAddress) public view returns(uint) {
-        uint tempUserWithdrawAmount;
+        uint tempUserWithdrawalAmount;
         uint tempNumerator;
         if (totalKeys == 0 ) {
-            tempUserWithdrawAmount = 0;
+            tempUserWithdrawalAmount = 0;
         } else {
             tempNumerator = divTracker[_userAddress]._keyBalance * divPool;
-            tempUserWithdrawAmount = tempNumerator/totalKeys - divTracker[_userAddress]._withdrawnAmount;  
+            tempUserWithdrawalAmount = tempNumerator/totalKeys - divTracker[_userAddress]._withdrawnAmount;
         }  
-        return tempUserWithdrawAmount;
+        return tempUserWithdrawalAmount;
     }
     /**
      * @dev Contains the same 'on-the-fly' calculations as the updateDivvies function
     */
     function withdrawDivvies() public {
         address payable to = payable(msg.sender);
-        uint tempUserWithdrawAmount;
+        uint tempUserWithdrawalAmount;
         uint tempNumerator;
         if (totalKeys == 0 ) {
             revert NoDivviesToClaim();
-        } else {
-            tempNumerator = divTracker[msg.sender]._keyBalance * divPool;
-            tempUserWithdrawAmount = tempNumerator/totalKeys - divTracker[msg.sender]._withdrawnAmount;
-            divTracker[msg.sender]._withdrawnAmount += tempUserWithdrawAmount;
         }
-        if (tempUserWithdrawAmount <= 0) revert NoDivviesToClaim();
-        to.transfer(tempUserWithdrawAmount);
+        tempNumerator = divTracker[msg.sender]._keyBalance * divPool;
+        tempUserWithdrawalAmount = tempNumerator/totalKeys - divTracker[msg.sender]._withdrawnAmount;
+        divTracker[msg.sender]._withdrawnAmount += tempUserWithdrawalAmount;
+
+        if (tempUserWithdrawalAmount <= 0) revert NoDivviesToClaim();
+        to.transfer(tempUserWithdrawalAmount);
     }
 
     /**
