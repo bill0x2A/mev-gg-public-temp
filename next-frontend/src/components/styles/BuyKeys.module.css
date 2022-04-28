@@ -1,0 +1,7 @@
+.downArrow {
+    transform: scaleY(-1);
+}
+
+.button:focus {
+    box-shadow: none !important;
+}

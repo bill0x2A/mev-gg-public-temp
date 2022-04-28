@@ -1,9 +1,16 @@
-export { Account } from './Account'
-export { Connect } from './Connect'
-export { NetworkSwitcher } from './NetworkSwitcher'
-export { Balance } from './Balance'
-export { Fomo } from './Fomo'
-export { FomoBuyKey } from './FomoBuyKey'
-export { Navbar } from './navigation/Navbar';
+export { Account } from './Account';
+export { Connect } from './Connect';
+export { NetworkSwitcher } from './NetworkSwitcher';
+export { Balance } from './Balance';
+export { TimeRemaining } from './TimeRemaining';
+export { BuyKeys } from './BuyKeys';
 export { Card } from './Card';
 export { Blocknumber } from './BlockNumber';
+export { default as Jackpot } from './Jackpot';
+export { default as AnimatedTitle } from './AnimatedTitle';
+export { default as ConnectWallet } from './ConnectWallet';
+export { default as OwnedKeys } from './OwnedKeys';
+export { default as Dividends } from './Dividends';
+export { default as Winner } from './Winner';
+export { default as GameOver } from './GameOver';
+export { default as YouWon } from './YouWon';

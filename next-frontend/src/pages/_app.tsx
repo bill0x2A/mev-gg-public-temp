@@ -10,6 +10,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { WalletLinkConnector } from 'wagmi/connectors/walletLink'
 import { ChakraProvider } from '@chakra-ui/react';
 import { ToastProvider } from 'react-toast-notifications';
+import '../styles/globals.css';
 import theme from '../theme';
 
 // Get environment variables
@@ -19,7 +20,7 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID as string
 
 // Pick chains
 const chains = defaultChains
-const defaultChain = chain.mainnet
+const defaultChain = chain.rinkeby
 
 // Set up connectors
 type ConnectorsConfig = { chainId?: number }
@@ -70,6 +71,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     <>
       <NextHead>
         <title>MEV.GG</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='true' />
+        <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"></link>
       </NextHead>
       <Provider
         autoConnect

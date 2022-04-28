@@ -1,0 +1,7 @@
+.connect {
+   border-radius: 0px;
+}
+
+.connect:focus {
+   box-shadow: none !important; 
+}
