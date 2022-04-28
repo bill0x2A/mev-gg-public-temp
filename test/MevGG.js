@@ -29,14 +29,18 @@ describe("MevGG contract", function () {
   beforeEach(async function () {
     // Get the ContractFactory and Signers here.
     MevGG = await ethers.getContractFactory("MevGG");
+    Renderer = await ethers.getContractFactory("Renderer");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
     hardhatMevGG = await MevGG.deploy(startTime1, increment1, initialKeyPrice);
-
+    hardhatRenderer = await Renderer.deploy();
+    await hardhatRenderer.deployed();
     // We can interact with the contract by calling `hardhatToken.method()`
     await hardhatMevGG.deployed();
+    console.log(hardhatRenderer.address);
+    await hardhatMevGG.setRenderer(hardhatRenderer.address);
   });
 
   // You can nest describe calls to create subsections.
@@ -89,6 +93,14 @@ describe("MevGG contract", function () {
       await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
       await hardhatMevGG.connect(addr2).purchaseKeys(2, { value: 2*keyPrice });
     });
+    it("Should purchase 20 keys", async function () {
+      await hardhatMevGG.connect(addr2).purchaseKeys(20, { value: keyPrice.mul(20) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(20);
+      newKeyPrice = await hardhatMevGG.keyPrice();
+      expect(newKeyPrice).to.equal(initialKeyPrice);
+      await hardhatMevGG.connect(addr2).purchaseKeys(5, { value: keyPrice.mul(5) });
+      expect(await hardhatMevGG.totalKeys()).to.equal(25);
+    });
     it("Should update winning", async function () {
       await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
       expect(await hardhatMevGG.totalKeys()).to.equal(1);
@@ -129,6 +141,13 @@ describe("MevGG contract", function () {
       expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1-32);
       await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
       expect(await hardhatMevGG.getTimeLeft()).to.equal(startTime1-3);
+    });
+    it("Should render SVG", async function () {
+      await hardhatMevGG.connect(addr2).purchaseKeys(1, { value: keyPrice });
+      expect(await hardhatMevGG.totalKeys()).to.equal(1);
+      expect(await hardhatMevGG.totalSupply()).to.equal(1);
+      expect(await hardhatMevGG.getWinner()).to.equal(addr2.address);
+      console.log(await hardhatMevGG.tokenURI(0));
     });
   });
 });

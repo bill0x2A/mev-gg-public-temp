@@ -3,11 +3,20 @@
 pragma solidity ^0.8.13;
 
 import "hardhat/console.sol";
+import "erc721a/contracts/ERC721A.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import './Renderer.sol';
+
 
 /**
  * @title A MEV game
 */
-contract MevGG {
+contract MevGG is ERC721A {
+    using Strings for uint256;
+
+    // Store renderer as separate contract so we can update it if needed
+    Renderer public renderer;
+
     address public developer;
     uint public giveToJackpot;
     uint public startTime;
@@ -26,6 +35,7 @@ contract MevGG {
     uint public counter;
     uint public developerOnePercent;
     uint public giveToDeveloper;
+    // string private baseURI = "baseUri";
     
     struct Divvies {
         uint _keyBalance;
@@ -52,7 +62,7 @@ contract MevGG {
     /// @notice Thrown if developer percentage is claimed by a player that is not the developer
 	error NotDeveloper();
 
-    constructor(uint _startTime, uint _increment, uint _keyPrice) {
+    constructor(uint _startTime, uint _increment, uint _keyPrice) ERC721A("mevgg", unicode"♞") {
         /**
         * @notice developer address is used to withdraw 1% depending on the outcome
         * of the vote. Developer address has NO more privileges than any other address.  
@@ -112,6 +122,9 @@ contract MevGG {
         }
 
         winning = msg.sender;
+        
+        _safeMint(msg.sender, _numKeys);
+        
         emit keysPurchased(_numKeys, winning);
 
     } 
@@ -190,6 +203,24 @@ contract MevGG {
         to.transfer(developerOnePercent);
         developerOnePercent = 0;
     }
+
+    function setRenderer(Renderer _renderer) public {
+        if (msg.sender != developer) revert NotDeveloper();
+        renderer = _renderer;
+    }
+
+    // save bytecode by removing implementation of unused method
+    function _baseURI() internal view virtual override returns (string memory) {}
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        return renderer.render(tokenId);
+    }
+
+    function numberMinted(address owner) public view returns (uint256) {
+        return _numberMinted(owner);
+    }
+
     /** 
      * @notice [REMOVE] testing function to mine a block in hardhat.
     */
