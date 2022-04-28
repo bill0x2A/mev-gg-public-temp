@@ -11,7 +11,7 @@ import {
     Card,
 } from './';
 import { Crown } from './GameOver';
-import contractAddress from "../contracts/fomo-contract-address.json";
+import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useError } from '../hooks';
 

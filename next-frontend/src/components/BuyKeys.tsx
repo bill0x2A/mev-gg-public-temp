@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useContractWrite } from 'wagmi'
 import { Box, Flex, Text, keyframes, Button, Spinner } from '@chakra-ui/react';
-import contractAddress from "../contracts/fomo-contract-address.json";
+import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useError } from '../hooks';
 import { PileOfKeys } from './library';

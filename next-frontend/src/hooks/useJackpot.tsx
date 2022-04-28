@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import contractAddress from "../contracts/fomo-contract-address.json";
+import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useProvider, useContractRead } from 'wagmi';
 import { formatEther } from 'ethers/lib/utils';

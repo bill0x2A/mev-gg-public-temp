@@ -1,6 +1,6 @@
 import { useContractRead, useProvider } from 'wagmi';
 import * as React from 'react';
-import contractAddress from "../contracts/fomo-contract-address.json";
+import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import * as dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';

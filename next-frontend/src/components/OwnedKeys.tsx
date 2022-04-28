@@ -4,7 +4,7 @@ import {
     Text,
     Box,
 } from '@chakra-ui/react';
-import contractAddress from "../contracts/fomo-contract-address.json";
+import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { Card } from './Card';
 import { useAccount, useContract, useProvider } from 'wagmi';

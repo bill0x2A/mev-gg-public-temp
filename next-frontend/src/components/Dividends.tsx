@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Flex, Text, Button, Box, Spinner } from '@chakra-ui/react';
-import contractAddress from "../contracts/fomo-contract-address.json";
+import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import {
     useContract,
