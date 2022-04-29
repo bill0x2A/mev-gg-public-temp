@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract Renderer {
     using Strings for uint256;
-    
+
     function render(uint256 _tokenId) public pure returns (string memory) {
         string memory returnedSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 25 28" shape-rendering="crispEdges" background="#000">';
         returnedSvg = string.concat(returnedSvg,
@@ -37,7 +37,7 @@ contract Renderer {
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
-                                '{"description":"A unique Shield, designed and built on-chain. 1 of 5000.", "image": "data:image/svg+xml;base64,',
+                                '{"description":"A unique key in the grand game of MEV. Entitles you to dividends from all the keys minted after you.", "image": "data:image/svg+xml;base64,',
                                 Base64.encode(bytes(returnedSvg)),
                                 '", "attributes": ',
                                 attributes,
@@ -60,8 +60,3 @@ contract Renderer {
     }
 
 }
-
-
-    // function example() external pure returns (string memory) {
-    //     return render(1);
-    // }

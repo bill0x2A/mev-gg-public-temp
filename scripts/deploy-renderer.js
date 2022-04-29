@@ -9,32 +9,21 @@ async function main() {
   );
   const start = await deployer.getBalance()
   console.log("Account balance before deploy:", (await deployer.getBalance()).toString());
-  
-  
-  console.log("Deploying renderer contract");
+
+  const initialKeyPrice = 500000000000000;
+  const startTime = 86400;
+  const increment = 30;
 
   const Renderer = await hre.ethers.getContractFactory("Renderer");
   const renderer = await Renderer.deploy();
   await renderer.deployed();
   console.log("Renderer deployed to:", renderer.address);
 
-  const initialKeyPrice = 500000000000000;
-  const startTime = 86400;
-  const increment = 30;
-
-  const MevGG = await hre.ethers.getContractFactory("MevGG");
-  const mevGG = await MevGG.deploy(startTime, increment, initialKeyPrice);
-  await mevGG.deployed();
-  console.log("MevGG deployed to:", mevGG.address);
-
-  await mevGG.setRenderer(renderer.address)
-  console.log("MevGG set renderer to:", renderer.address);
-
   // We also save the contract's artifacts and address in the frontend directory
-  saveNextFrontendFiles(mevGG, renderer);
+  // saveNextFrontendFiles(mevGG);
 }
 
-function saveNextFrontendFiles(mevGG, renderer) {
+function saveNextFrontendFiles(mevGG) {
   const fs = require("fs");
   const contractsDir = __dirname + "/../next-frontend/src/contracts";
 
@@ -46,22 +35,12 @@ function saveNextFrontendFiles(mevGG, renderer) {
     contractsDir + "/mevgg-contract-address.json",
     JSON.stringify({ MevGG: mevGG.address }, undefined, 2)
   );
-  fs.writeFileSync(
-    contractsDir + "/renderer-contract-address.json",
-    JSON.stringify({ Renderer: renderer.address }, undefined, 2)
-  );
 
   const MevGGArtifact = artifacts.readArtifactSync("MevGG");
-  const RendererArtifact = artifacts.readArtifactSync("Renderer");
-
 
   fs.writeFileSync(
     contractsDir + "/MevGG.json",
     JSON.stringify(MevGGArtifact, null, 2)
-  );
-  fs.writeFileSync(
-    contractsDir + "/Renderer.json",
-    JSON.stringify(RendererArtifact, null, 2)
   );
 }
 
