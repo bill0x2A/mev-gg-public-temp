@@ -187,12 +187,16 @@ contract MevGG is ERC721A {
         jackpot = 0;
     }
 
+    /**
+     * @notice Helper function to determine who won the game, reverts if time left is not 0
+    */
     function whoWon() public view returns(address winner){
         if (getTimeLeft() == 0) {
             return winning;
         }
         revert GameActive();
     }
+
     /**
      * @notice The developer can call this function IFF the game is over.
     */
@@ -203,7 +207,10 @@ contract MevGG is ERC721A {
         to.transfer(developerOnePercent);
         developerOnePercent = 0;
     }
-
+    
+    /**
+     * @notice Sets the renderer contract that returns the base64 encoded SVG art
+    */
     function setRenderer(Renderer _renderer) public {
         if (msg.sender != developer) revert NotDeveloper();
         renderer = _renderer;
