@@ -20,7 +20,7 @@ export const BuyKeys: React.FC = () => {
     },
         "purchaseKeys",
     {
-        overrides: { value: ethers.utils.parseEther("0.0005")} // This wont work as its a varPPiable in a hook call. Do it with contract.call()
+        overrides: { value: ethers.utils.parseEther("0.05")} // This wont work as its a varPPiable in a hook call. Do it with contract.call()
     });
 
     useError(error);
