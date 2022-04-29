@@ -2,7 +2,7 @@
 
 [mev.gg](http://mev.gg) is a MEV game. The game works like Fomo3d.
 
-[MEV.gg](http://MEV.gg) is a single smart contract that does the following:
+`MevGG` is a single smart contract that does the following:
 
 There is a countdown clock starting at 24 hours.
 
@@ -24,14 +24,11 @@ Buying keys early gives a high chance of payout if the game gets successful, and
 
 ## TODO
 Mason (and/or Sam):
-
 * Create a sample MEV bot to buy keys in front of the clock hitting zero. Display this code on the mev.gg website
 * Write FAQ
 * Create Twitter, Discord
 
 Bill:
-
-Finish functionality on the website:
 * claimDivvies
 * Fix time remaining bug(?)
 * Fix key purchase bug
