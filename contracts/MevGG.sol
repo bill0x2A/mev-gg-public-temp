@@ -50,7 +50,7 @@ contract MevGG is ERC721A {
     /// @notice Thrown when trying to purchase keys after the game is over
     error WinnerAlreadyDeclared();
     /// @notice Thrown if player does not have enough ETH for their purchase
-	error InsufficientFunds();
+	error WrongPaymentAmount();
     /// @notice Thrown if player does not have any dividends to claim
 	error NoDivviesToClaim();
     /// @notice Thrown if jackpot claimed while game is still active
@@ -103,7 +103,7 @@ contract MevGG is ERC721A {
     function purchaseKeys(uint _numKeys) public payable {
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
         if (getTimeLeft() == 0) revert WinnerAlreadyDeclared();
-        if (msg.value != keyPrice*_numKeys) revert InsufficientFunds();
+        if (msg.value != keyPrice*_numKeys) revert WrongPaymentAmount();
 
         uint devShareNumerator = msg.value*100;
         uint devShare = devShareNumerator/10000;

@@ -4,8 +4,11 @@ pragma solidity ^0.8.13;
 import './SVG.sol';
 import './Utils.sol';
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract Renderer {
+    using Strings for uint256;
+    
     function render(uint256 _tokenId) public pure returns (string memory) {
         string memory returnedSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 25 28" shape-rendering="crispEdges" background="#000">';
         returnedSvg = string.concat(returnedSvg,
@@ -49,7 +52,7 @@ contract Renderer {
     function generateAttributesJSON(uint256 _tokenId) internal pure returns (bytes memory attributesJSON) {
         attributesJSON = abi.encodePacked(
             '[{"trait_type":"Key number", "value":"',
-            _tokenId,
+            _tokenId.toString(),
             '"}, {"trait_type":"Hardware", "value":"',
             "key"
         );
