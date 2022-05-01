@@ -27,7 +27,7 @@ const Dapp: React.FC = () => {
   const winner = useWinner();
   const [timeLeftText, gameOver] = useTimeLeft();
   // DEV, REMOVE FOR PROD
-  const [override, setOverride] = React.useState(true);
+  const [override, setOverride] = React.useState(false);
 
   const walletIsConnected = accountData && accountData.address;
   const userIsWinner = accountData && accountData.address === winner;
