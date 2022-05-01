@@ -29,9 +29,8 @@ Mason (and/or Sam):
 * Create Twitter, Discord
 
 Bill:
-- [ ] claimDivvies
-- [ ] Fix time remaining bug(?)
-- [ ] Fix key purchase bug
+- [X] claimDivvies
+- [X] Fix key purchase bug
 - [ ] Display NFT(s) after purchase
 - [ ] Display claimable Divvies and token ID in SVG
 - [ ] Show FAQ
