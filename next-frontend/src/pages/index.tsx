@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {
     useAccount,
+    useContract,
+    useProvider,
   } from 'wagmi'
 import {
   Box,
@@ -18,16 +20,50 @@ import {
   Winner,
   GameOver,
   YouWon,
+  Dividends,
+  Card,
 } from '../components';
-import { useTimeLeft, useWinner } from '../hooks';
+import { ethers } from 'ethers';
+import contractAddress from "../contracts/mevgg-contract-address.json";
+import MevGGArtifact from "../contracts/MevGG.json";
+import { useWinner } from '../hooks';
 import BackgroundGrid from '../components/BackgroundGrid';
 
 const Dapp: React.FC = () => {
   const [{ data: accountData }] = useAccount();
+  const provider = useProvider();
+  const contract = useContract({
+    addressOrName: contractAddress.MevGG,
+    contractInterface: MevGGArtifact.abi,
+    signerOrProvider: provider,
+  });
   const winner = useWinner();
-  const [timeLeftText, gameOver] = useTimeLeft();
+  const [keyBalance, setKeyBalance] = React.useState<number>(0);
+  const [dividend, setDividend] = React.useState<string>('');
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
+
+  const getKeysOwned = async (): Promise<void> => {
+      if (!accountData) return;
+      try {
+          const divTracker = await contract.divTracker(accountData.address);
+          const _keyBalance = divTracker._keyBalance.toNumber();
+          setKeyBalance(_keyBalance);
+      } catch(e) {
+          console.log(e);
+      }
+  }
+
+  const getDividend = async (): Promise<void> => {
+    if (!accountData) return;
+    try {
+        const _dividend = await contract.getClaimableDivvies(accountData.address);
+        const formattedDividend = Number(ethers.utils.formatEther(_dividend)).toFixed(5);
+        setDividend(formattedDividend);
+    } catch(e) {
+        console.log(e);
+    }
+};
 
   const walletIsConnected = accountData && accountData.address;
   const userIsWinner = accountData && accountData.address === winner;
@@ -47,8 +83,11 @@ const Dapp: React.FC = () => {
             <Winner/>
             {!walletIsConnected && <ConnectWallet/>}
             {walletIsConnected && <Flex gap='10px'>
-              <OwnedKeys/>
-              <BuyKeys/>
+              <Card>
+                <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
+                <Dividends dividend={dividend} getDividend={getDividend}/>
+              </Card>
+              <BuyKeys getKeysOwned={getKeysOwned}/>
             </Flex>}
           </Box>
         </Center>
@@ -60,7 +99,7 @@ const Dapp: React.FC = () => {
       <GameOver/>
       {!walletIsConnected && <ConnectWallet delay={1}/>}
       {walletIsConnected && <Flex gap='10px' marginBottom={'50px'}>
-        <OwnedKeys/>
+        <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
         {userIsWinner && <YouWon/>}
       </Flex>}
     </>
