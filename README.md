@@ -24,10 +24,10 @@ Buying keys early gives a high chance of payout if the game gets successful, and
 
 ## TODO
 Mason (and/or Sam):
-- [ ]Create a sample MEV bot to buy keys in front of the clock hitting zero. Display this code on the mev.gg website
-- [ ]Write FAQ
-- [ ]Create Twitter, Discord
-- [ ]Fix infinte claim divvies bug
+- [ ] Create a sample MEV bot to buy keys in front of the clock hitting zero. Display this code on the mev.gg website
+- [ ] Write FAQ
+- [ ] Create Twitter, Discord
+- [ ] Fix infinte claim divvies bug
 
 Bill:
 - [X] claimDivvies
