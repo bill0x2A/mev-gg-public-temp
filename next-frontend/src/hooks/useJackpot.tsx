@@ -11,7 +11,10 @@ export const useJackpot = (): string => {
         contractInterface: MevGGArtifact.abi,
         signerOrProvider: provider,
     },
-    'divPool');
+    'divPool',
+    {
+        watch: false,
+    });
 
     const jackpotText = useMemo(() => {
         if (jackpotLoading && !jackpotData) return 'Fetching jackpot...';

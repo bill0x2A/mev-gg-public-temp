@@ -5,7 +5,7 @@ import { useBlockNumber } from 'wagmi'
 
 export const Blocknumber = () => {
   const [{ data: blockData, error, loading }, getBlockNumber] = useBlockNumber({
-    watch: true
+    watch: false
   })
 
   const blockNumberText = React.useMemo(() => {

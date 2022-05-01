@@ -59,7 +59,7 @@ const Dapp: React.FC = () => {
     pageContent = <>
       <GameOver/>
       {!walletIsConnected && <ConnectWallet delay={1}/>}
-      {walletIsConnected && <Flex gap='10px'>
+      {walletIsConnected && <Flex gap='10px' marginBottom={'50px'}>
         <OwnedKeys/>
         {userIsWinner && <YouWon/>}
       </Flex>}

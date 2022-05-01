@@ -10,7 +10,8 @@ export const useWinner = (): string => {
         contractInterface: MevGGArtifact.abi,
         signerOrProvider: provider,
     },
-    'getWinner');
+    'getWinner',
+    {watch: false});
 
     const winnerText = useMemo(() => {
         if (winningLoading) return '...';

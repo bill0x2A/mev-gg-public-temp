@@ -9,6 +9,7 @@ import {
     useProvider,
 } from 'wagmi';
 import { useError } from '../hooks';
+import { ethers } from 'ethers';
 
 
 const Dividends: React.FC = () => {
@@ -29,22 +30,23 @@ const Dividends: React.FC = () => {
 
     useError(error);
 
-    const [dividend, setDividend] = React.useState<number>(0.123);
+    const [dividend, setDividend] = React.useState<string>('');
 
-    const claimButtonDisabled = dividend === 0;
+    const claimButtonDisabled = Number(dividend) === 0;
 
     const getDividend = async (): Promise<void> => {
         if (!accountData) return;
         try {
             const _dividend = await contract.getClaimableDivvies(accountData.address);
-            setDividend(_dividend.toNumber().toFixed(5));
+            const formattedDividend = Number(ethers.utils.formatEther(_dividend)).toFixed(5);
+            setDividend(formattedDividend);
         } catch(e) {
             console.log(e);
         }
     };
 
     const claimDividend = async (): Promise<void> => {
-        if (accountData) return;
+        if (!accountData) return;
         try {
             write();
         } catch(e) {

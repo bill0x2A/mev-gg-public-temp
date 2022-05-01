@@ -18,10 +18,7 @@ export const BuyKeys: React.FC = () => {
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
     },
-        "purchaseKeys",
-    {
-        overrides: { value: ethers.utils.parseEther("0.05")} // This wont work as its a varPPiable in a hook call. Do it with contract.call()
-    });
+        "purchaseKeys",);
 
     useError(error);
 
@@ -35,8 +32,12 @@ export const BuyKeys: React.FC = () => {
     };
 
     const handleBuyKeys = () => {
+        const etherToSend = String(numberOfKeys * 0.01);
+        const weiToSend = ethers.utils.parseEther(etherToSend);
+        console.log(numberOfKeys, weiToSend);
         write({
             args: [numberOfKeys],
+            overrides: { value: weiToSend },
         });
     }
 
