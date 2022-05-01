@@ -29,11 +29,12 @@ Mason (and/or Sam):
 * Create Twitter, Discord
 
 Bill:
-* claimDivvies
-* Fix time remaining bug(?)
-* Fix key purchase bug
-* Display NFT(s) after purchase
-* Display claimable Divvies and token ID in SVG
-* Show FAQ
-* Show MEV bot code
-* Link to contracts, OpenSea, Discord
+- [ ] claimDivvies
+- [ ] Fix time remaining bug(?)
+- [ ] Fix key purchase bug
+- [ ] Display NFT(s) after purchase
+- [ ] Display claimable Divvies and token ID in SVG
+- [ ] Show FAQ
+- [ ] Show MEV bot code
+- [ ] Link to contracts, OpenSea, Discord
+- [ ] Performance issues
