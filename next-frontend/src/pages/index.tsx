@@ -26,7 +26,7 @@ import {
 import { ethers } from 'ethers';
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
-import { useWinner } from '../hooks';
+import { useJackpot, useWinner } from '../hooks';
 import BackgroundGrid from '../components/BackgroundGrid';
 
 const Dapp: React.FC = () => {
@@ -37,7 +37,8 @@ const Dapp: React.FC = () => {
     contractInterface: MevGGArtifact.abi,
     signerOrProvider: provider,
   });
-  const winner = useWinner();
+  const { winnerText, read: getWinner } = useWinner();
+  const { read: getJackpot } = useJackpot()
   const [keyBalance, setKeyBalance] = React.useState<number>(0);
   const [dividend, setDividend] = React.useState<string>('');
   // DEV, REMOVE FOR PROD
@@ -63,10 +64,17 @@ const Dapp: React.FC = () => {
     } catch(e) {
         console.log(e);
     }
-};
+  };
+
+  const handleUserHasBoughtKey = () => {
+    getDividend();
+    getKeysOwned();
+    getWinner();
+    getJackpot();
+  };
 
   const walletIsConnected = accountData && accountData.address;
-  const userIsWinner = accountData && accountData.address === winner;
+  const userIsWinner = accountData && accountData.address === winnerText;
 
   const handleOverrideSwitch = () => {
     setOverride(!override);
@@ -87,7 +95,7 @@ const Dapp: React.FC = () => {
                 <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
                 <Dividends dividend={dividend} getDividend={getDividend}/>
               </Card>
-              <BuyKeys getKeysOwned={getKeysOwned}/>
+              <BuyKeys handleUserHasBoughtKey={handleUserHasBoughtKey}/>
             </Flex>}
           </Box>
         </Center>
@@ -99,7 +107,10 @@ const Dapp: React.FC = () => {
       <GameOver/>
       {!walletIsConnected && <ConnectWallet delay={1}/>}
       {walletIsConnected && <Flex gap='10px' marginBottom={'50px'}>
-        <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
+        <Card>
+          <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
+          <Dividends dividend={dividend} getDividend={getDividend}/>
+        </Card>
         {userIsWinner && <YouWon/>}
       </Flex>}
     </>

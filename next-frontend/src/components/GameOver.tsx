@@ -17,13 +17,13 @@ export const Crown = ({ size }: CrownProps) => {
 };
 
 const GameOver: React.FC = () => {
-    const winner = useWinner();
+    const { winnerText } = useWinner();
     return <Center flexDirection={'column'} paddingTop={'100px'} marginBottom={'40px'}>
         <Text whiteSpace={'nowrap'} marginBottom={'50px'} fontSize={'60px'}>GAME OVER!</Text>
         <Box animation={`${float} infinite alternate 0.8s ease-in-out ${100}ms`}>
             <Crown size={50}/>
         </Box>
-        <Text lineHeight={1} fontSize={'5vw'}>{winner}</Text>
+        <Text lineHeight={1} fontSize={'5vw'}>{winnerText}</Text>
     </Center>
 };
 

@@ -12,11 +12,11 @@ import Image from 'next/image';
 import classes from './styles/BuyKeys.module.css';
 
 interface BuyKeysProps {
-    getKeysOwned: () => void;
+    handleUserHasBoughtKey: () => void;
 }
 
 export const BuyKeys: React.FC<BuyKeysProps> = ({
-    getKeysOwned,
+    handleUserHasBoughtKey,
 }: BuyKeysProps) => {
     const [numberOfKeys, setNumberOfKeys] = React.useState(1);
 
@@ -26,7 +26,7 @@ export const BuyKeys: React.FC<BuyKeysProps> = ({
     },
         "purchaseKeys",);
 
-    useWait(data?.hash, getKeysOwned)
+    useWait(data?.hash, handleUserHasBoughtKey)
     useError(error);
 
     const handleIncreaseKeys = () => {

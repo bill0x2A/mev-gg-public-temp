@@ -4,9 +4,9 @@ import MevGGArtifact from "../contracts/MevGG.json";
 import { useProvider, useContractRead } from 'wagmi';
 import { formatEther } from 'ethers/lib/utils';
 
-export const useJackpot = (): string => {
+export const useJackpot = (): { jackpotText: string, read: () => void } => {
     const provider = useProvider();
-    const [{ data: jackpotData, error: jackpotError, loading: jackpotLoading }] = useContractRead({
+    const [{ data: jackpotData, error: jackpotError, loading: jackpotLoading }, read] = useContractRead({
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
         signerOrProvider: provider,
@@ -24,5 +24,5 @@ export const useJackpot = (): string => {
         return `Jackpot: ${jackpot} ETH`;
     }, [jackpotLoading, jackpotError, jackpotData]);
 
-    return jackpotText;
+    return { jackpotText, read };
 }
