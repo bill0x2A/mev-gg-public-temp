@@ -27,7 +27,7 @@ Mason (and/or Sam):
 - [ ] Create a sample MEV bot to buy keys in front of the clock hitting zero. Display this code on the mev.gg website
 - [ ] Write FAQ
 - [ ] Create Twitter, Discord
-- [ ] Fix infinte claim divvies bug
+- [X] Fix infinte claim divvies bug
 
 Bill:
 - [X] claimDivvies
@@ -38,3 +38,7 @@ Bill:
 - [ ] Show MEV bot code
 - [ ] Link to contracts, OpenSea, Discord
 - [ ] Performance issues
+- [ ] Claimable divvies updates after purchase confirmation, but the jackpot doesn't
+- [ ] Countdown clock shows hours and seconds
+- [ ] Show "Connect wallet" button and modal instead of game over toggle
+- [ ] Show when a transaction is pending and confirmed (maybe a key unlocking animation? Would be kind of cool)
