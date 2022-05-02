@@ -165,6 +165,7 @@ contract MevGG is ERC721A {
         uint claimableDivvies = getClaimableDivvies(msg.sender);
         if (claimableDivvies <= 0) revert NoDivviesToClaim();
         address payable to = payable(msg.sender);
+        divTracker[msg.sender]._withdrawnAmount += claimableDivvies;
         to.transfer(claimableDivvies);
     }
 

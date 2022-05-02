@@ -364,6 +364,7 @@ describe("MevGG sped up", function () {
       await hardhatMevGG.connect(addr2).withdrawDivvies();
       expect(await ethers.provider.getBalance(addr1.address)).to.be.closeTo(addr1Balance.add(dividendsAddr1), ethers.utils.parseEther("0.0001"));
       expect(await ethers.provider.getBalance(addr2.address)).to.be.closeTo(addr2Balance.add(dividendsAddr2), ethers.utils.parseEther("0.0001"));
+      await expect(hardhatMevGG.connect(addr1).withdrawDivvies()).to.be.reverted;
     });
   });
 });
