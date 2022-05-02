@@ -8,7 +8,7 @@ import ReactTooltip from 'react-tooltip'
 import classes from './styles/Winner.module.css';
 
 const Winner: React.FC = () => {
-    const winner = useWinner();
+    const { winnerText } = useWinner();
 
     return <>
         <Center>
@@ -26,7 +26,7 @@ const Winner: React.FC = () => {
             }}>
                 <Flex data-tip={'Current winner'} alignItems={'center'}>
                     <Box marginRight={'15px'}><Image src={crown}/></Box>
-                    <Text cursor={'default'}>{winner}</Text>
+                    <Text cursor={'default'}>{winnerText}</Text>
                 </Flex>
         </motion.h4>
         </Center>

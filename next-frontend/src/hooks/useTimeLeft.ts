@@ -20,7 +20,7 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
     },
         "getTimeLeft",
         {
-            watch: true,
+            watch: false,
     });
 
     const [gameOver, setGameOver] = React.useState<boolean | null>(null);

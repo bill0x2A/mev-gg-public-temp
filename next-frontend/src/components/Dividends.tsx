@@ -6,19 +6,21 @@ import {
     useContract,
     useContractWrite,
     useAccount,
-    useProvider,
+    useWaitForTransaction,
 } from 'wagmi';
-import { useError } from '../hooks';
+import { useError, useWait } from '../hooks';
+import { ethers } from 'ethers';
 
+interface DividendsProps {
+    dividend: string;
+    getDividend: () => void;
+}
 
-const Dividends: React.FC = () => {
+const Dividends: React.FC<DividendsProps> = ({
+    dividend,
+    getDividend,
+}: DividendsProps) => {
     const [{ data: accountData }] = useAccount();
-    const provider = useProvider();
-    const contract = useContract({
-        addressOrName: contractAddress.MevGG,
-        contractInterface: MevGGArtifact.abi,
-        signerOrProvider: provider,
-    });
 
     const [{ data, error, loading }, write] = useContractWrite({
         addressOrName: contractAddress.MevGG,
@@ -27,24 +29,18 @@ const Dividends: React.FC = () => {
         "withdrawDivvies",
     );
 
+    useWait(data?.hash, getDividend);
+
     useError(error);
 
-    const [dividend, setDividend] = React.useState<number>(0.123);
+    
 
-    const claimButtonDisabled = dividend === 0;
+    const claimButtonDisabled = Number(dividend) === 0;
 
-    const getDividend = async (): Promise<void> => {
-        if (!accountData) return;
-        try {
-            const _dividend = await contract.getClaimableDivvies(accountData.address);
-            setDividend(_dividend.toNumber().toFixed(5));
-        } catch(e) {
-            console.log(e);
-        }
-    };
+
 
     const claimDividend = async (): Promise<void> => {
-        if (accountData) return;
+        if (!accountData) return;
         try {
             write();
         } catch(e) {

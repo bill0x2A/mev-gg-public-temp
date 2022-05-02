@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useContractWrite } from 'wagmi'
+import { useContractWrite, useWaitForTransaction } from 'wagmi'
 import { Box, Flex, Text, keyframes, Button, Spinner } from '@chakra-ui/react';
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
-import { useError } from '../hooks';
+import { useError, useWait } from '../hooks';
 import { PileOfKeys } from './library';
 import { Card } from '.';
 import { ethers } from "ethers";
@@ -11,18 +11,22 @@ import arrow from '../assets/images/arrow.svg';
 import Image from 'next/image';
 import classes from './styles/BuyKeys.module.css';
 
-export const BuyKeys: React.FC = () => {
+interface BuyKeysProps {
+    handleUserHasBoughtKey: () => void;
+}
+
+export const BuyKeys: React.FC<BuyKeysProps> = ({
+    handleUserHasBoughtKey,
+}: BuyKeysProps) => {
     const [numberOfKeys, setNumberOfKeys] = React.useState(1);
 
     const [{ data, error, loading }, write] = useContractWrite({
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
     },
-        "purchaseKeys",
-    {
-        overrides: { value: ethers.utils.parseEther("0.05")} // This wont work as its a varPPiable in a hook call. Do it with contract.call()
-    });
+        "purchaseKeys",);
 
+    useWait(data?.hash, handleUserHasBoughtKey)
     useError(error);
 
     const handleIncreaseKeys = () => {
@@ -35,8 +39,11 @@ export const BuyKeys: React.FC = () => {
     };
 
     const handleBuyKeys = () => {
+        const etherToSend = String(numberOfKeys * 0.01);
+        const weiToSend = ethers.utils.parseEther(etherToSend);
         write({
             args: [numberOfKeys],
+            overrides: { value: weiToSend },
         });
     }
 

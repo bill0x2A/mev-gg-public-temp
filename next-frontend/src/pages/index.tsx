@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {
     useAccount,
+    useContract,
+    useProvider,
   } from 'wagmi'
 import {
   Box,
@@ -18,19 +20,61 @@ import {
   Winner,
   GameOver,
   YouWon,
+  Dividends,
+  Card,
 } from '../components';
-import { useTimeLeft, useWinner } from '../hooks';
+import { ethers } from 'ethers';
+import contractAddress from "../contracts/mevgg-contract-address.json";
+import MevGGArtifact from "../contracts/MevGG.json";
+import { useJackpot, useWinner } from '../hooks';
 import BackgroundGrid from '../components/BackgroundGrid';
 
 const Dapp: React.FC = () => {
   const [{ data: accountData }] = useAccount();
-  const winner = useWinner();
-  const [timeLeftText, gameOver] = useTimeLeft();
+  const provider = useProvider();
+  const contract = useContract({
+    addressOrName: contractAddress.MevGG,
+    contractInterface: MevGGArtifact.abi,
+    signerOrProvider: provider,
+  });
+  const { winnerText, read: getWinner } = useWinner();
+  const { read: getJackpot } = useJackpot()
+  const [keyBalance, setKeyBalance] = React.useState<number>(0);
+  const [dividend, setDividend] = React.useState<string>('');
   // DEV, REMOVE FOR PROD
-  const [override, setOverride] = React.useState(true);
+  const [override, setOverride] = React.useState(false);
+
+  const getKeysOwned = async (): Promise<void> => {
+      if (!accountData) return;
+      try {
+          const divTracker = await contract.divTracker(accountData.address);
+          const _keyBalance = divTracker._keyBalance.toNumber();
+          setKeyBalance(_keyBalance);
+      } catch(e) {
+          console.log(e);
+      }
+  }
+
+  const getDividend = async (): Promise<void> => {
+    if (!accountData) return;
+    try {
+        const _dividend = await contract.getClaimableDivvies(accountData.address);
+        const formattedDividend = Number(ethers.utils.formatEther(_dividend)).toFixed(5);
+        setDividend(formattedDividend);
+    } catch(e) {
+        console.log(e);
+    }
+  };
+
+  const handleUserHasBoughtKey = () => {
+    getDividend();
+    getKeysOwned();
+    getWinner();
+    getJackpot();
+  };
 
   const walletIsConnected = accountData && accountData.address;
-  const userIsWinner = accountData && accountData.address === winner;
+  const userIsWinner = accountData && accountData.address === winnerText;
 
   const handleOverrideSwitch = () => {
     setOverride(!override);
@@ -47,8 +91,11 @@ const Dapp: React.FC = () => {
             <Winner/>
             {!walletIsConnected && <ConnectWallet/>}
             {walletIsConnected && <Flex gap='10px'>
-              <OwnedKeys/>
-              <BuyKeys/>
+              <Card>
+                <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
+                <Dividends dividend={dividend} getDividend={getDividend}/>
+              </Card>
+              <BuyKeys handleUserHasBoughtKey={handleUserHasBoughtKey}/>
             </Flex>}
           </Box>
         </Center>
@@ -59,8 +106,11 @@ const Dapp: React.FC = () => {
     pageContent = <>
       <GameOver/>
       {!walletIsConnected && <ConnectWallet delay={1}/>}
-      {walletIsConnected && <Flex gap='10px'>
-        <OwnedKeys/>
+      {walletIsConnected && <Flex gap='10px' marginBottom={'50px'}>
+        <Card>
+          <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
+          <Dividends dividend={dividend} getDividend={getDividend}/>
+        </Card>
         {userIsWinner && <YouWon/>}
       </Flex>}
     </>

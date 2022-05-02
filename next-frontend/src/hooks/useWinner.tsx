@@ -3,14 +3,15 @@ import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useProvider, useContractRead } from 'wagmi';
 
-export const useWinner = (): string => {
+export const useWinner = (): { winnerText: string, read: () => void } => {
     const provider = useProvider();
-    const [{ data: winningData, error: winningError, loading: winningLoading }] = useContractRead({
+    const [{ data: winningData, error: winningError, loading: winningLoading }, read] = useContractRead({
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
         signerOrProvider: provider,
     },
-    'getWinner');
+    'getWinner',
+    {watch: false});
 
     const winnerText = useMemo(() => {
         if (winningLoading) return '...';
@@ -19,5 +20,5 @@ export const useWinner = (): string => {
         return winningData as unknown as string; // yeahhhhh...
     }, [winningData, winningError, winningLoading]);
 
-    return winnerText;
+    return { winnerText, read };
 };

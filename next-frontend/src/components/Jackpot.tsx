@@ -10,7 +10,7 @@ import chest from '../assets/images/GGchest.svg';
 import Image from 'next/image';
 
 const Jackpot: React.FC = () => {
-    const jackpotText = useJackpot();
+    const { jackpotText } = useJackpot();
 
     return (
         <motion.div
