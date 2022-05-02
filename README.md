@@ -42,3 +42,5 @@ Bill:
 - [ ] Countdown clock shows hours and seconds
 - [ ] Show "Connect wallet" button and modal instead of game over toggle
 - [ ] Show when a transaction is pending and confirmed (maybe a key unlocking animation? Would be kind of cool)
+- [ ] Mobile support
+- [ ] Favicon
