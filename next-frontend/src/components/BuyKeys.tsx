@@ -39,7 +39,7 @@ export const BuyKeys: React.FC<BuyKeysProps> = ({
     };
 
     const handleBuyKeys = () => {
-        const etherToSend = String(numberOfKeys * 0.01);
+        const etherToSend = String(numberOfKeys * 0.05);
         const weiToSend = ethers.utils.parseEther(etherToSend);
         write({
             args: [numberOfKeys],
