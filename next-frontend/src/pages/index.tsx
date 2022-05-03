@@ -11,6 +11,7 @@ import {
   Container,
   Button,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import {
   OwnedKeys,
   Jackpot,
@@ -28,6 +29,7 @@ import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useJackpot, useWinner } from '../hooks';
 import BackgroundGrid from '../components/BackgroundGrid';
+import { PrettyButton } from '../components/library';
 
 const Dapp: React.FC = () => {
   const [{ data: accountData }] = useAccount();
@@ -38,6 +40,7 @@ const Dapp: React.FC = () => {
     signerOrProvider: provider,
   });
   const { winnerText, read: getWinner } = useWinner();
+  const router = useRouter();
   const { read: getJackpot } = useJackpot()
   const [keyBalance, setKeyBalance] = React.useState<number>(0);
   const [dividend, setDividend] = React.useState<string>('');
@@ -66,11 +69,15 @@ const Dapp: React.FC = () => {
     }
   };
 
+  const navigateToFAQPage = () => {
+    router.push('faq');
+  }
+
   const handleUserHasBoughtKey = () => {
     getDividend();
-    getKeysOwned();
-    getWinner();
-    getJackpot();
+    setTimeout(getKeysOwned, 500);
+    setTimeout(getWinner, 1000);
+    setTimeout(getJackpot, 1500);
   };
 
   const walletIsConnected = accountData && accountData.address;
@@ -97,6 +104,10 @@ const Dapp: React.FC = () => {
               </Card>
               <BuyKeys handleUserHasBoughtKey={handleUserHasBoughtKey}/>
             </Flex>}
+            <Flex margin={'10px auto'} justifyContent='center' gap='10px'>
+              <PrettyButton onClick={navigateToFAQPage}>FAQ</PrettyButton>
+              <PrettyButton>View NFTs</PrettyButton>
+            </Flex>
           </Box>
         </Center>
     </>
