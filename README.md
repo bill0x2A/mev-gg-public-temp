@@ -36,13 +36,12 @@ Bill:
 - [X] Fix key purchase bug
 - [ ] Display NFT(s) after purchase
 - [ ] Display claimable Divvies and token ID in SVG
-- [ ] Show FAQ
-- [ ] Show MEV bot code
+- [X] Show FAQ (waiting on content)
+- [X] Show MEV bot code (waiting on content) 
 - [ ] Link to contracts, OpenSea, Discord
 - [ ] Performance issues
 - [ ] Claimable divvies updates after purchase confirmation, but the jackpot doesn't
 - [ ] Countdown clock shows hours and seconds
-- [ ] Show "Connect wallet" button and modal instead of game over toggle
 - [ ] Show when a transaction is pending and confirmed (maybe a key unlocking animation? Would be kind of cool)
 - [ ] Mobile support
 - [ ] Favicon
