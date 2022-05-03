@@ -106,7 +106,7 @@ const Dapp: React.FC = () => {
             </Flex>}
             <Flex margin={'10px auto'} justifyContent='center' gap='10px'>
               <PrettyButton onClick={navigateToFAQPage}>FAQ</PrettyButton>
-              <PrettyButton>View NFTs</PrettyButton>
+              <PrettyButton onClick={navigateToFAQPage}>View NFTs</PrettyButton>
             </Flex>
           </Box>
         </Center>

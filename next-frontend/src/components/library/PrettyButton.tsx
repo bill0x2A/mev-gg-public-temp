@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
     Button,
 } from '@chakra-ui/react';
-import classes from './styles/PrettyButton.module.css';
 import { CornerDecorations } from './CornerBox';
 
 interface PrettyButtonProps {
@@ -16,7 +15,7 @@ const PrettyButton: React.FC<PrettyButtonProps> = ({
 }: PrettyButtonProps) => {
     return <Button
         _hover={{background: 'rgb(36, 42, 54)'}}
-        // _focus={{outline: 'none', background: 'rgb(36, 42, 54)'}}
+        _focus={{outline: 'none', background: 'rgb(36, 42, 54)'}}
         fontSize={'24px'}
         onClick={onClick}
         minWidth={'150px'}
