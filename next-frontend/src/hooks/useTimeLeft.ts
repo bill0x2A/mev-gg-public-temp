@@ -1,19 +1,13 @@
-import { useContractRead, useProvider } from 'wagmi';
+import { useContractRead, useProvider, useContractEvent } from 'wagmi';
 import * as React from 'react';
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
-import * as dayjs from 'dayjs';
-import * as duration from 'dayjs/plugin/duration';
-import * as relativeTime from 'dayjs/plugin/relativeTime';
-
-dayjs.extend(duration.default)
-dayjs.extend(relativeTime.default)
 
 type UseTimeLeftReturnType = [string, (null | boolean)];
 
 export const useTimeLeft = (): UseTimeLeftReturnType => {
     const provider = useProvider();
-    const [{ data: timeLeft, error, loading }] = useContractRead({
+    const [{ data: timeLeft, error, loading }, read] = useContractRead({
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
         signerOrProvider: provider,
@@ -23,14 +17,48 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
             watch: false,
     });
 
+    // When a keys are purchased grab the new timeLeft from the contract
+    useContractEvent({
+        addressOrName: contractAddress.MevGG,
+        contractInterface: MevGGArtifact.abi,  
+        },
+        'keysPurchased',
+        read,
+    )
+
     const [gameOver, setGameOver] = React.useState<boolean | null>(null);
+    const [jsTimeLeft, setJsTimeLeft] = React.useState<number>();
+
+    const convertSecondsToDaysHoursMinutes = (seconds: number): string => {
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds - (days * 86400)) / 3600);
+        const minutes = Math.floor((seconds - (hours * 3600) - (days * 86400)) / 60);
+        const secs = seconds - (hours * 3600) - (minutes * 60) - (days * 86400);
+        return (days !== 0 ? `${days}D` : '') + `${hours}H ${minutes}M ${secs}S`;
+    }
+
+    const countdownTimeByOneSecond = (): void => {
+        setJsTimeLeft((s) => {
+            if (!s) return;
+            if (s > 1) {
+                return s - 1;
+            } else {
+                return s;
+            }
+        });
+    }
+
+    React.useEffect(() => {
+        setJsTimeLeft(timeLeft as unknown as number);
+        const countdown = setInterval(countdownTimeByOneSecond, 1000);
+        return () => clearInterval(countdown);
+    }, [timeLeft]);
 
     const timeLeftText = React.useMemo<string>(() => {
-        if (loading) return 'Fetching time left....';
-        if (error || !timeLeft ) return 'Error fetching time left';
-        const timeRemaining = dayjs.duration(timeLeft.toNumber(), 'seconds').humanize();
-        return `Time left: ${timeRemaining}`;
-    }, [loading, error, timeLeft]);
+        if (loading) return '...';
+        if (error || !jsTimeLeft ) return 'Error';
+        return convertSecondsToDaysHoursMinutes(jsTimeLeft);
+    }, [loading, error, jsTimeLeft]);
 
     React.useEffect(() => {
         if (timeLeft && Number(timeLeft) === 0) setGameOver(true);
@@ -38,5 +66,4 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
     }, [timeLeft]);
 
     return [timeLeftText, gameOver];
-
 };

@@ -8,7 +8,7 @@ import {
     PrettyButton,
 } from '../components/library';
 
-const FAQ = () => {
+const FAQ: React.FC = () => {
     const router = useRouter();
 
     const navigateToSampleBotCode = () => {

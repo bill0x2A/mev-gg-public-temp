@@ -3,13 +3,10 @@ import { Flex, Text, Button, Box, Spinner } from '@chakra-ui/react';
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import {
-    useContract,
     useContractWrite,
     useAccount,
-    useWaitForTransaction,
 } from 'wagmi';
 import { useError, useWait } from '../hooks';
-import { ethers } from 'ethers';
 
 interface DividendsProps {
     dividend: string;
@@ -33,8 +30,6 @@ const Dividends: React.FC<DividendsProps> = ({
     useError(error);
 
     const claimButtonDisabled = Number(dividend) === 0;
-
-
 
     const claimDividend = async (): Promise<void> => {
         if (!accountData) return;

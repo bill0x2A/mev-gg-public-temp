@@ -4,3 +4,4 @@ export { useJackpot } from './useJackpot';
 export { useWinner } from './useWinner';
 export { useTimeLeft } from './useTimeLeft';
 export { useWait } from './useWait';
+export { useWhoWon } from './useWhoWon';

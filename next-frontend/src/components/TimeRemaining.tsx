@@ -17,7 +17,7 @@ export const TimeRemaining: React.FC = () => {
                 <Box height={'30px'} marginRight='10px'>
                     <Image height={'30px'} width={'30px'} src={clock}/>
                 </Box>
-                <Text fontSize={'20px'}>{timeLeftText}</Text>
+                <Text fontSize={'30px'}>{timeLeftText}</Text>
             </Flex>
         </Box>
     )
