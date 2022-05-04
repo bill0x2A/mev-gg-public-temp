@@ -42,6 +42,7 @@ const Dapp: React.FC = () => {
     contractInterface: MevGGArtifact.abi,
     signerOrProvider: provider,
   });
+  const robotRef = React.useRef();
   const { winnerText, read: getWinner } = useWinner();
   const router = useRouter();
   const { read: getJackpot } = useJackpot()
@@ -90,6 +91,17 @@ const Dapp: React.FC = () => {
     setOverride(!override);
   };
 
+  const showRobotTooltip = () => {
+    if (!robotRef || !robotRef.current) return;
+    ReactTooltip.show(robotRef.current);
+    setTimeout(() => ReactTooltip.hide(robotRef.current), 2000);
+  };
+
+  React.useEffect(() => {
+    // This shit ain't workin'
+    showRobotTooltip();
+  }, [robotRef]);
+
   let pageContent;
   // if (gameOver === false) {
   if(!override) { // DEV REMOVE FOR PROD
@@ -132,7 +144,7 @@ const Dapp: React.FC = () => {
 
   return (
     <>
-      <RobotBadge/>
+      <RobotBadge ref={robotRef}/>
       <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button>
       <Container position={'relative'} zIndex={1} maxW={'xl'} minHeight={'100vh'}>
         {pageContent}
