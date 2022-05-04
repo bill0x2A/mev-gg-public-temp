@@ -23,13 +23,16 @@ import {
   YouWon,
   Dividends,
   Card,
+  RobotBadge,
 } from '../components';
 import { ethers } from 'ethers';
+import ReactTooltip from 'react-tooltip'
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useJackpot, useWinner } from '../hooks';
 import BackgroundGrid from '../components/BackgroundGrid';
 import { PrettyButton } from '../components/library';
+import classes from './styles/index.module.css';
 
 const Dapp: React.FC = () => {
   const [{ data: accountData }] = useAccount();
@@ -129,11 +132,19 @@ const Dapp: React.FC = () => {
 
   return (
     <>
+      <RobotBadge/>
       <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button>
       <Container position={'relative'} zIndex={1} maxW={'xl'} minHeight={'100vh'}>
         {pageContent}
       </Container>
       <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>
+      <ReactTooltip
+            border
+            effect='solid'
+            delayShow={100}
+            delayHide={100}
+            className={classes.tooltip}
+        />
       </>
   );
 }

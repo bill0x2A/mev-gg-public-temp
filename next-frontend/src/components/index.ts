@@ -14,3 +14,4 @@ export { default as Dividends } from './Dividends';
 export { default as Winner } from './Winner';
 export { default as GameOver } from './GameOver';
 export { default as YouWon } from './YouWon';
+export { default as RobotBadge } from './RobotBadge';

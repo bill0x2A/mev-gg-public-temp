@@ -4,8 +4,6 @@ import { Flex, Text, Box, Center } from '@chakra-ui/react';
 import crown from '../assets/images/crown.svg';
 import { useWinner } from '../hooks';
 import Image from 'next/image';
-import ReactTooltip from 'react-tooltip'
-import classes from './styles/Winner.module.css';
 
 const Winner: React.FC = () => {
     const { winnerText } = useWinner();
@@ -30,13 +28,7 @@ const Winner: React.FC = () => {
                 </Flex>
         </motion.h4>
         </Center>
-        <ReactTooltip
-            border
-            effect='solid'
-            delayShow={100}
-            delayHide={100}
-            className={classes.tooltip}
-        />
+
     </>
 };
 

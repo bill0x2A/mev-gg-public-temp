@@ -30,10 +30,7 @@ const Dividends: React.FC<DividendsProps> = ({
     );
 
     useWait(data?.hash, getDividend);
-
     useError(error);
-
-    
 
     const claimButtonDisabled = Number(dividend) === 0;
 
