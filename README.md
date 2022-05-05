@@ -45,3 +45,4 @@ Bill:
 - [ ] Show when a transaction is pending and confirmed (maybe a key unlocking animation? Would be kind of cool)
 - [ ] Mobile support
 - [ ] Favicon
+- [ ] Fix load animations
