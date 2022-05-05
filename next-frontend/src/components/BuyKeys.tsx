@@ -1,52 +1,30 @@
 import * as React from 'react';
-import { useContractWrite, useWaitForTransaction } from 'wagmi'
-import { Box, Flex, Text, keyframes, Button, Spinner } from '@chakra-ui/react';
+import { useContractWrite } from 'wagmi'
+import { Box, Flex, Text, Button, Spinner } from '@chakra-ui/react';
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
 import { useError, useWait } from '../hooks';
 import { PileOfKeys } from './library';
 import { Card } from '.';
-import { ethers } from "ethers";
 import arrow from '../assets/images/arrow.svg';
 import Image from 'next/image';
 import classes from './styles/BuyKeys.module.css';
 
 interface BuyKeysProps {
-    handleUserHasBoughtKey: () => void;
+    handleBuyKeys: () => void;
+    handleIncreaseKeys: () => void;
+    handleDecreaseKeys: () => void;
+    isBuyingKey?: boolean;
+    numberOfKeys: number;
 }
 
 export const BuyKeys: React.FC<BuyKeysProps> = ({
-    handleUserHasBoughtKey,
+    handleBuyKeys,
+    handleIncreaseKeys,
+    handleDecreaseKeys,
+    isBuyingKey,
+    numberOfKeys,
 }: BuyKeysProps) => {
-    const [numberOfKeys, setNumberOfKeys] = React.useState(1);
-
-    const [{ data, error, loading }, write] = useContractWrite({
-        addressOrName: contractAddress.MevGG,
-        contractInterface: MevGGArtifact.abi,
-    },
-        "purchaseKeys",);
-
-    useWait(data?.hash, handleUserHasBoughtKey)
-    useError(error);
-
-    const handleIncreaseKeys = () => {
-        setNumberOfKeys((numberOfKeys) => numberOfKeys + 1);
-    };
-
-    const handleDecreaseKeys = () => {
-        if(numberOfKeys <= 1) return;
-        setNumberOfKeys((numberOfKeys) => numberOfKeys - 1);
-    };
-
-    const handleBuyKeys = () => {
-        const etherToSend = String(numberOfKeys * 0.05);
-        const weiToSend = ethers.utils.parseEther(etherToSend);
-        write({
-            args: [numberOfKeys],
-            overrides: { value: weiToSend },
-        });
-    }
-
     return (
         <Card>
             <Text fontSize={'30px'}>Buy Keys</Text>
@@ -70,7 +48,7 @@ export const BuyKeys: React.FC<BuyKeysProps> = ({
             </Flex>
             <Flex alignItems={'center'} gap={'15px'}>
                 <Text>{`${(0.05 * numberOfKeys).toFixed(2)} ETH`}</Text>
-                <Button disabled={loading} onClick={handleBuyKeys}>{loading ? <Spinner/> : 'Buy'}</Button>
+                <Button disabled={isBuyingKey} onClick={handleBuyKeys}>{isBuyingKey ? <Spinner/> : 'Buy'}</Button>
             </Flex>
             <PileOfKeys number={numberOfKeys}/>
         </Card>

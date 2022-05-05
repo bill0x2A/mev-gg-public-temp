@@ -5,3 +5,4 @@ export { useWinner } from './useWinner';
 export { useTimeLeft } from './useTimeLeft';
 export { useWait } from './useWait';
 export { useWhoWon } from './useWhoWon';
+export { useBuyKeys } from './useBuyKeys';

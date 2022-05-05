@@ -22,28 +22,28 @@ const Layout: React.FC<LayoutProps> = ({ children, title }: LayoutProps) => {
     };
 
     return <>
-        <Box
-            onClick={handleBackButtonClicked}
-            transition='all 200ms'
-            cursor='pointer'
-            position={'absolute'}
-            top='40px'
-            left='40px'
-            _hover={{
-                left: '35px'
-            }}>
-            <Image src={leftArrow} width={'40px'} height={'40px'}/>    
-        </Box>
-        <Center flexDirection={'column'}>
-                <Text fontSize={'50px'}>MEV.GG</Text>
-                <Box
-                    padding='32px'
-                    border={'3px solid white'}
-                    maxWidth='52ch'
-                    marginTop='100px' position='relative'>
-                    <CornerDecorations/>
-                    <Text marginBottom={'20px'} borderBottom={'3px solid white'} fontSize={'40px'}>{title}</Text>
-            {children}
+        <Center position={'relative'} flexDirection={'column'}>
+            <Box
+                onClick={handleBackButtonClicked}
+                transition='all 200ms'
+                cursor='pointer'
+                position={'absolute'}
+                top='10px'
+                left='10px'
+                _hover={{
+                    left: '5px'
+                }}>
+                <Image src={leftArrow} width={'40px'} height={'40px'}/>    
+            </Box>
+            <Text fontSize={'50px'}>MEV.GG</Text>
+            <Box
+                padding='32px'
+                border={'3px solid white'}
+                maxWidth='52ch'
+                marginTop='100px' position='relative'>
+                <CornerDecorations/>
+                <Text marginBottom={'20px'} borderBottom={'3px solid white'} fontSize={'40px'}>{title}</Text>
+                {children}
             </Box>
         </Center>
     </>

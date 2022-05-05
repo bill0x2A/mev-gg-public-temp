@@ -15,3 +15,5 @@ export { default as Winner } from './Winner';
 export { default as GameOver } from './GameOver';
 export { default as YouWon } from './YouWon';
 export { default as RobotBadge } from './RobotBadge';
+export { default as KeyBadge } from './KeyBadge';
+export { default as PurchaseModal } from './PurchaseModal';

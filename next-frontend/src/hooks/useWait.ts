@@ -1,12 +1,26 @@
 import * as React from 'react';
 import { useWaitForTransaction } from 'wagmi';
 
-export const useWait = (txHash: string | undefined, callback: () => void) => {
-    const [{ data: waitingData }] = useWaitForTransaction({
+export const useWait = (
+    txHash: string | undefined,
+    successCallback: () => void,
+    errorCallback?: (error: Error) => any,
+) => {
+    const [{ data: waitingData, error, loading }] = useWaitForTransaction({
         hash: txHash,
     });
 
     React.useEffect(() => {
-        callback();
+        if (!!waitingData) {
+            successCallback();
+        }
     }, [waitingData]);
+
+    React.useEffect(() => {
+        if (!!error && !!errorCallback) {
+            errorCallback(error);
+        }
+    }, [error]);
+
+    return { error, loading }
 };
