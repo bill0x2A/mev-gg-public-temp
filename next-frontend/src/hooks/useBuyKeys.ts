@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { ethers } from 'ethers';
+import { keyPrice } from '../constants';
 import { useContractWrite } from 'wagmi'
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json"
 import { useError, useWait } from '../hooks';
 
 interface UseBuyKeysParams {
-    onSuccess: () => void;
+    onSuccess: (data?: ethers.providers.TransactionResponse) => void;
     onError?: (error: Error) => any;
 }
 
@@ -35,7 +36,7 @@ export const useBuyKeys = ({
     };
 
     const handleBuyKeys = () => {
-        const etherToSend = String(numberOfKeys * 0.05);
+        const etherToSend = String(numberOfKeys * keyPrice);
         const weiToSend = ethers.utils.parseEther(etherToSend);
         write({
             args: [numberOfKeys],

@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { useContractWrite } from 'wagmi'
+import { keyPrice } from '../constants';
 import { Box, Flex, Text, Button, Spinner } from '@chakra-ui/react';
-import contractAddress from "../contracts/mevgg-contract-address.json";
-import MevGGArtifact from "../contracts/MevGG.json";
-import { useError, useWait } from '../hooks';
 import { PileOfKeys } from './library';
 import { Card } from '.';
 import arrow from '../assets/images/arrow.svg';
@@ -47,7 +44,7 @@ export const BuyKeys: React.FC<BuyKeysProps> = ({
                 <Text textAlign={'center'} flex={1} fontSize='100px'>{numberOfKeys}</Text>
             </Flex>
             <Flex alignItems={'center'} gap={'15px'}>
-                <Text>{`${(0.05 * numberOfKeys).toFixed(2)} ETH`}</Text>
+                <Text>{`${(keyPrice * numberOfKeys).toFixed(2)} ETH`}</Text>
                 <Button disabled={isBuyingKey} onClick={handleBuyKeys}>{isBuyingKey ? <Spinner/> : 'Buy'}</Button>
             </Flex>
             <PileOfKeys number={numberOfKeys}/>
