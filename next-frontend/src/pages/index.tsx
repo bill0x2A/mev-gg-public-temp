@@ -37,12 +37,14 @@ import {
     useJackpot,
     useWinner,
     useBuyKeys,
+    useLocalStorage,
 } from '../hooks';
 import BackgroundGrid from '../components/BackgroundGrid';
 import { PrettyButton } from '../components/library';
 import classes from './styles/index.module.css';
 
 const Dapp: React.FC = () => {
+  const shouldPlayAnimations = useLocalStorage();
   const router = useRouter();
   const [{ data: accountData }] = useAccount();
   const provider = useProvider();
@@ -53,7 +55,7 @@ const Dapp: React.FC = () => {
   });
   const robotRef = React.useRef();
   const { winnerText, read: getWinner } = useWinner();
-  const { read: getJackpot } = useJackpot();
+  const { read: getJackpot, jackpotText } = useJackpot();
   const [keyBalance, setKeyBalance] = React.useState<number>(0);
   const [dividend, setDividend] = React.useState<string>('');
   const {
@@ -66,9 +68,10 @@ const Dapp: React.FC = () => {
   } = useBuyKeys({
     onSuccess: () => {},
   });
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
-  const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   const getKeysOwned = async (): Promise<void> => {
       if (!accountData) return;
@@ -142,12 +145,12 @@ const Dapp: React.FC = () => {
   // Wallet connected state, game in progress
   if(!override) {
     pageContent = <>
-      <AnimatedTitle/>
+      <AnimatedTitle shouldPlayAnimations={shouldPlayAnimations}/>
       <Center paddingBottom={'50px'} minHeight={'calc(100vh - 100px)'} flexDirection={'column'} position='relative' top={'100px'}>
             <Box width={'100%'} marginTop='0px'>
-            <Jackpot/>
-            <Winner/>
-            {!walletIsConnected && <ConnectWallet/>}
+            <Jackpot jackpotText={jackpotText} shouldPlayAnimations={shouldPlayAnimations}/>
+            <Winner winnerText={winnerText} shouldPlayAnimations={shouldPlayAnimations}/>
+            {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations}/>}
             {walletIsConnected && <Flex gap='10px'>
               <Card>
                 <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
@@ -162,7 +165,6 @@ const Dapp: React.FC = () => {
             </Flex>}
             <Flex margin={'10px auto'} justifyContent='center' gap='10px'>
               <PrettyButton onClick={navigateToFAQPage}>FAQ</PrettyButton>
-              {/* <PrettyButton onClick={navigateToFAQPage}>View NFTs</PrettyButton> */}
             </Flex>
           </Box>
         </Center>
@@ -173,7 +175,7 @@ const Dapp: React.FC = () => {
   if (override) {
     pageContent = <>
       <GameOver/>
-      {!walletIsConnected && <ConnectWallet delay={1}/>}
+      {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations} delay={1}/>}
       {walletIsConnected && <Flex gap='10px' marginBottom={'50px'}>
         <Card>
           <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>

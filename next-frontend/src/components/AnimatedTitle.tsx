@@ -1,8 +1,15 @@
 import * as React from 'react';
+import { Text } from '@chakra-ui/react';
 import classes from './styles/AnimatedTitle.module.css';
 import { motion } from 'framer-motion';
 
-const AnimatedTitle = () => {
+interface AnimatedTitleProps {
+    shouldPlayAnimations: boolean;
+}
+
+const AnimatedTitle:React.FC<AnimatedTitleProps> = ({
+    shouldPlayAnimations,
+}: AnimatedTitleProps) => {
     const text = 'MEV.GG';
     const sentence = {
         hidden: { opacity: 1 },
@@ -22,6 +29,17 @@ const AnimatedTitle = () => {
             y: 0,
         },
     };
+
+    if (!shouldPlayAnimations) {
+        return <Text
+            position={'absolute'}
+            fontSize='50px'
+            top={'0px'}
+            left={'calc(50% - 3ch)'}>
+            {text}
+        </Text>
+    }
+
     return <motion.div
         style={{
             position: 'absolute',

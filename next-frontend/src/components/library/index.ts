@@ -5,3 +5,4 @@ export { CornerBox } from './CornerBox';
 export { CornerDecorations } from './CornerBox';
 export { default as PrettyButton } from './PrettyButton';
 export { default as Layout } from './Layout';
+export { TranslateAnimation, OpacityAnimation, GrowAnimation } from './Animations';

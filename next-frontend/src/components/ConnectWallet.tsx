@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { useConnect, useAccount } from 'wagmi'
-import { CornerDecorations, ShinyButton } from './library';
-import { useError } from '../hooks'
 import {
     Modal,
     ModalOverlay,
@@ -10,15 +8,23 @@ import {
     useDisclosure,
   } from '@chakra-ui/react';
 import {
-    Connect,
-} from './index';
+    CornerDecorations,
+    ShinyButton,
+    OpacityAnimation,
+    TranslateAnimation,
+    GrowAnimation,
+} from './library';
+import { useError } from '../hooks'
+import { Connect } from '.';
 import classes from './styles/ConnectWallet.module.css';
 
 interface ConnectWalletProps {
+    shouldPlayAnimations: boolean;
     delay?: number;
 }
 
 const ConnectWallet: React.FC<ConnectWalletProps> = ({
+    shouldPlayAnimations,
     delay = 6,
 }: ConnectWalletProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,7 +38,6 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({
       const [{ data: accountData }] = useAccount()
       useError(error);
 
-
     React.useEffect(() => {
         if(accountData?.address) {
             onClose();
@@ -40,43 +45,27 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({
     }, [accountData?.address]);
 
     return <>
-        <motion.div
+        <GrowAnimation
             className={classes.connectWalletContainer}
             style={{background: '#1A202C', position: 'relative'}}
-            initial={{
-                width: 0,
-                border: '0px solid white',
-            }}
-            animate={{
-                width: '100%',
-                border: '3px solid white',
-                transition: { delay: delay, duration: 0.8 },
-            }}>
-            <motion.div
-                initial={{
-                    opacity: 0
-                }}
-                animate={{
-                    opacity: 1,
-                    transition: { delay: delay + 0.8, duration: 0.1}
-                }}>
+            shouldPlay={shouldPlayAnimations}
+            delay={delay}
+            duration={0.8}>
+            <OpacityAnimation
+                shouldPlay={shouldPlayAnimations}
+                delay={delay + 0.8}
+                duration={0.1}>
                 <CornerDecorations/>
-            </motion.div>
-            <motion.div
-                initial={{
-                    opacity: 0,
-                }}
-                animate={{
-                    opacity: 1,
-                    transition: { delay: delay + 1 },
-                }}
-                >
+            </OpacityAnimation>
+            <OpacityAnimation
+                delay={delay + 1}
+                shouldPlay={shouldPlayAnimations}>
                 <ShinyButton
                     styles={{ container: classes.button }}
                     text={'Connect Wallet'}
                     onClick={onOpen}/>
-            </motion.div>
-        </motion.div>
+            </OpacityAnimation>
+        </GrowAnimation>
 
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay/>
