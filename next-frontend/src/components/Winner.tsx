@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, Text, Box, Center } from '@chakra-ui/react';
+import { Flex, Text, Center } from '@chakra-ui/react';
 import crown from '../assets/images/crown.svg';
 import { OpacityAnimation } from './library';
 import Image from 'next/image';
@@ -18,7 +18,7 @@ const Winner: React.FC<WinnerProps> = ({
         delay={6}
         transform={'translateY(-10px)'}>
         <Flex data-tip={'Current winner'} alignItems={'center'}>
-            <Box marginRight={'15px'}><Image src={crown} alt={'winner crown'}/></Box>
+            <Flex marginRight={'15px'}><Image src={crown} alt={'winner crown'}/></Flex>
             <Text fontSize={'20px'} cursor={'default'}>{winnerText}</Text>
         </Flex>
     </OpacityAnimation>

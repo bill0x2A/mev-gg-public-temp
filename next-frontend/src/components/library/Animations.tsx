@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Box } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 interface AnimationProps {
@@ -31,30 +30,35 @@ export const TranslateAnimation: React.FC<TranslateAnimationProps> = ({
     end = '0px',
     style,
     children,
-}: TranslateAnimationProps) => shouldPlay ? <motion.div
-    className={className}
-    style={{
-        position: 'relative',
-        ...style,
-    }}
-    initial={{
-        bottom: start,
-    }}
-    animate={{
-        bottom: end,
-        transition: { delay, duration },
-        transform,
-    }}
-    transition={{ duration }}>
-    { children }
-</motion.div> : <Box
-    bottom={end}
-    className={className}
-    position={'relative'}
-    { ...style }
-    transform={transform}>
-    { children }
-</Box>;
+}: TranslateAnimationProps) => {
+    const attributes = shouldPlay ? {
+        initial: {
+            bottom: start,
+        },
+        animate: {
+            bottom: end,
+            transition: { delay, duration },
+            transform,
+        },
+        transition: {
+            duration,
+        },
+    } : {
+        initial: {
+            bottom: end,
+            transform,
+        }
+    };
+    return <motion.div
+        className={className}
+        style={{
+            position: 'relative',
+            ...style,
+        }}
+        {...attributes}>
+        { children }
+    </motion.div>;
+} 
 
 export const OpacityAnimation: React.FC<OpacityAnimationProps> = ({
     className,
@@ -66,30 +70,33 @@ export const OpacityAnimation: React.FC<OpacityAnimationProps> = ({
     end = 1,
     style,
     children,
-}: OpacityAnimationProps) => shouldPlay ? <motion.div
-    className={className}
-    style={{
-        position: 'relative',
-        ...style,
-    }}
-    initial={{
-        opacity: start,
-    }}
-    animate={{
-        opacity: end,
-        transition: { delay, duration },
-        transform,
-    }}
-    transition={{ duration }}>
-    { children }
-</motion.div> : <Box
-    opacity={end}
-    className={className}
-    position={'relative'}
-    { ...style }
-    transform={transform}>
-    { children }
-</Box>;
+}: OpacityAnimationProps) => {
+    const attributes = shouldPlay ? {
+        initial: {
+            opacity: start,
+        },
+        animate: {
+            opacity: end,
+            transition: { delay, duration },
+            transform,
+        },
+        transition: { duration },
+    } : {
+        initial: {
+            opacity: end,
+        },
+    };
+    return <motion.div
+        className={className}
+        style={{
+            position: 'relative',
+            opacity: 1,
+            ...style,
+        }}
+        {...attributes}>
+        { children }
+    </motion.div>;
+}
 
 export const GrowAnimation: React.FC<GrowAnimationProps> = ({
     className,
@@ -103,30 +110,33 @@ export const GrowAnimation: React.FC<GrowAnimationProps> = ({
     borderEnd = '3px solid white',
     style,
     children,
-}: GrowAnimationProps) => shouldPlay ? <motion.div
-    className={className}
-    style={{
-        position: 'relative',
-        ...style,
-    }}
-    initial={{
-        width: start,
-        border: borderStart,
-    }}
-    animate={{
-        width: end,
-        transition: { delay, duration },
-        transform,
-        border: borderEnd,
-    }}
-    transition={{ duration }}>
-    { children }
-</motion.div> : <Box
-    className={className}
-    position={'relative'}
-    { ...style }
-    transform={transform}
-    width={end}
-    border={borderEnd}>
-    { children }
-</Box>;
+}: GrowAnimationProps) => {
+    const attributes = shouldPlay ? {
+        initial: {
+            width: start,
+            border: borderStart,
+        },
+        animate: {
+            width: end,
+            transition: { delay, duration },
+            transform,
+            border: borderEnd,
+        },
+        transition: { duration },
+    } : {
+        initial: {
+            transform,
+            border: borderEnd,
+            width: end,
+        },
+    };
+    return <motion.div
+        className={className}
+        style={{
+            position: 'relative',
+            ...style,
+        }}
+        {...attributes}>
+        { children }
+    </motion.div>;
+}

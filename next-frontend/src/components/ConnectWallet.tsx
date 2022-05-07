@@ -52,12 +52,6 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({
             delay={delay}
             duration={0.8}>
             <OpacityAnimation
-                shouldPlay={shouldPlayAnimations}
-                delay={delay + 0.8}
-                duration={0.1}>
-                <CornerDecorations/>
-            </OpacityAnimation>
-            <OpacityAnimation
                 delay={delay + 1}
                 shouldPlay={shouldPlayAnimations}>
                 <ShinyButton

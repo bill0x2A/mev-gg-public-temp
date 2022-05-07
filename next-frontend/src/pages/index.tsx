@@ -44,7 +44,7 @@ import { PrettyButton } from '../components/library';
 import classes from './styles/index.module.css';
 
 const Dapp: React.FC = () => {
-  const shouldPlayAnimations = useLocalStorage();
+  const userHasVisitedBefore = useLocalStorage();
   const router = useRouter();
   const [{ data: accountData }] = useAccount();
   const provider = useProvider();
@@ -69,6 +69,10 @@ const Dapp: React.FC = () => {
     onSuccess: () => {},
   });
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const shouldPlayAnimations = React.useMemo(() => {
+    if (accountData?.address || userHasVisitedBefore) return false;
+    return true;
+  }, [accountData]); // this might cause a bug, check this out
 
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
@@ -95,19 +99,19 @@ const Dapp: React.FC = () => {
     }
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (): void => {
     setModalIsOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setModalIsOpen(false);
   };
 
-  const navigateToFAQPage = () => {
+  const navigateToFAQPage = (): void => {
     router.push('faq');
   };
 
-  const handleUserHasBoughtKey = () => {
+  const handleUserHasBoughtKey = (): void => {
     // Refresh data at intervals to prevent API call overloads
     getDividend();
     setTimeout(getKeysOwned, 500);
@@ -118,22 +122,22 @@ const Dapp: React.FC = () => {
   const walletIsConnected = accountData && accountData.address;
   const userIsWinner = accountData && accountData.address === winnerText;
 
-  const handleOverrideSwitch = () => {
+  const handleOverrideSwitch = (): void => {
     setOverride(!override);
   };
 
-  const showRobotTooltip = () => {
+  const showRobotTooltip = (): void => {
     if (!robotRef || !robotRef.current) return;
-    ReactTooltip.show(robotRef.current);
-    setTimeout(() => ReactTooltip.hide(robotRef.current), 2000);
+    setTimeout(() => ReactTooltip.show(robotRef.current as any), 3000);
+    setTimeout(() => ReactTooltip.hide(robotRef.current), 6000);
   };
 
-  // This shit ain't workin'
+  // Open the robot badge dialogue on pageload.
   React.useEffect(() => {
     showRobotTooltip();
-  }, [robotRef]);
+  }, [robotRef?.current]);
 
-  // Open the transaction modal when a purchase transaction begins
+  // Open the transaction modal when a purchase transaction begins.
   React.useEffect(() => {
     if (txInProgress) {
       handleOpenModal();
@@ -145,29 +149,31 @@ const Dapp: React.FC = () => {
   // Wallet connected state, game in progress
   if(!override) {
     pageContent = <>
-      <AnimatedTitle shouldPlayAnimations={shouldPlayAnimations}/>
       <Center paddingBottom={'50px'} minHeight={'calc(100vh - 100px)'} flexDirection={'column'} position='relative' top={'100px'}>
-            <Box width={'100%'} marginTop='0px'>
-            <Jackpot jackpotText={jackpotText} shouldPlayAnimations={shouldPlayAnimations}/>
-            <Winner winnerText={winnerText} shouldPlayAnimations={shouldPlayAnimations}/>
-            {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations}/>}
-            {walletIsConnected && <Flex gap='10px'>
-              <Card>
-                <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
-                <Dividends dividend={dividend} getDividend={getDividend}/>
-              </Card>
-              <BuyKeys
-                handleBuyKeys={handleBuyKeys}
-                handleDecreaseKeys={handleDecreaseKeys}
-                handleIncreaseKeys={handleIncreaseKeys}
-                isBuyingKey={txInProgress}
-                numberOfKeys={numberOfKeys}/>
-            </Flex>}
-            <Flex margin={'10px auto'} justifyContent='center' gap='10px'>
-              <PrettyButton onClick={navigateToFAQPage}>FAQ</PrettyButton>
-            </Flex>
-          </Box>
-        </Center>
+        <Box width={'100%'} marginTop='0px'>
+          <Jackpot jackpotText={jackpotText} shouldPlayAnimations={shouldPlayAnimations}/>
+          <Winner winnerText={winnerText} shouldPlayAnimations={shouldPlayAnimations}/>
+          {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations}/>}
+          {walletIsConnected && <Flex
+            minWidth='220px'
+            flexDirection={{ base: 'column', sm: 'row'}} gap='10px'>
+            <Card>
+              <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
+              <Dividends dividend={dividend} getDividend={getDividend}/>
+            </Card>
+            <BuyKeys
+              handleBuyKeys={handleBuyKeys}
+              handleDecreaseKeys={handleDecreaseKeys}
+              handleIncreaseKeys={handleIncreaseKeys}
+              isBuyingKey={txInProgress}
+              numberOfKeys={numberOfKeys}/>
+          </Flex>}
+          <Flex margin={'10px auto'} justifyContent='center' gap='10px'>
+            <PrettyButton onClick={navigateToFAQPage}>FAQ</PrettyButton>
+          </Flex>
+        </Box>
+      </Center>
+      <AnimatedTitle shouldPlayAnimations={shouldPlayAnimations}/>
     </>
   }
 
@@ -176,7 +182,8 @@ const Dapp: React.FC = () => {
     pageContent = <>
       <GameOver/>
       {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations} delay={1}/>}
-      {walletIsConnected && <Flex gap='10px' marginBottom={'50px'}>
+      {walletIsConnected && <Flex minWidth='220px'
+              flexDirection={{ base: 'column-reverse', sm: 'row'}}  gap='10px' marginBottom={'50px'}>
         <Card>
           <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
           <Dividends dividend={dividend} getDividend={getDividend}/>
@@ -202,11 +209,11 @@ const Dapp: React.FC = () => {
       </Container>
       <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>
       <ReactTooltip
-            border
-            effect='solid'
-            delayShow={100}
-            delayHide={100}
-            className={classes.tooltip}/>
+        border
+        effect='solid'
+        delayShow={100}
+        delayHide={100}
+        className={classes.tooltip}/>
       </>
   );
 }

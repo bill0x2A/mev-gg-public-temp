@@ -15,6 +15,10 @@ const config = {
     },
     initialColorMode: 'dark',
     useSystemColorMode: false,
+    breakpoints: {
+        xs: '420px',
+        sm: '600px',
+    }
 }
   
 const theme = extendTheme({ config });

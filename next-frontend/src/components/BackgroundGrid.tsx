@@ -18,7 +18,8 @@ const BackgroundGrid: React.FC<BackgroundGridProps> = ({
 
     const verticals = React.useMemo(() => (
         verticalArray.map((n, i) => (
-            <div style={{
+            <div key={`${i}-${n}-vertiGrid`}
+                style={{
                 gridColumnStart: i + 1,
                 gridColumnEnd: i + 2,
                 gridRowStart: 1,
@@ -29,7 +30,8 @@ const BackgroundGrid: React.FC<BackgroundGridProps> = ({
 
     const horizontals = React.useMemo(() => (
         horizontalArray.map((n, i) => (
-            <div style={{
+            <div key={`${i}-${n}-horizGrid`}
+                style={{
                 gridRowStart: i + 1,
                 gridRowEnd: i + 2,
                 gridColumnStart: 1,

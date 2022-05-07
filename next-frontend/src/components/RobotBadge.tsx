@@ -5,18 +5,13 @@ import {
     Box,
     Text,
     keyframes,
+    forwardRef,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import robot from '../assets/images/robot.svg';
 import circle from '../assets/images/bigcircle.svg';
 
-interface RobotBadgeProps {
-    ref: React.MutableRefObject<any>;
-}
-
-const RobotBadge: React.FC<RobotBadgeProps> = ({
-    ref,
-}: RobotBadgeProps) => {
+const RobotBadge = forwardRef(({}, ref) => {
     const router = useRouter();
     const spin = keyframes`
         from { transform: rotate(-7deg); }
@@ -53,6 +48,6 @@ const RobotBadge: React.FC<RobotBadgeProps> = ({
             <Box position={'absolute'}top='calc(50% - 45px)'><Image src={circle} width='90px' height={'90px'}/></Box>
         </Center>
     </>
-};
+});
 
 export default RobotBadge;
