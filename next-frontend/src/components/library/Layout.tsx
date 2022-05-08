@@ -37,6 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }: LayoutProps) => {
             </Box>
             <Text fontSize={'50px'}>MEV.GG</Text>
             <Box
+                width={{ base: 'calc(100vw - 15px)'}}
                 padding='32px'
                 border={'3px solid white'}
                 maxWidth='52ch'

@@ -73,8 +73,14 @@ export const PileOfKeys: React.FC<PileOfKeysProps> = ({
         return getKeyElements();
     }, [number])
 
-    return <Box width='100%' height='100px' position='relative' margin='0 auto'>
-        {keyElements}
-    </Box>
+    return <Center width={'100%'} border='1px solid purple'>
+        <Box
+            width={'200px'}
+            border='1px solid red'
+            height='100px'
+            position='relative'>
+            {keyElements}
+        </Box>
+    </Center>
 
 };

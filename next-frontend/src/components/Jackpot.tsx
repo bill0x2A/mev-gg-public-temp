@@ -26,6 +26,7 @@ const Jackpot: React.FC<JackpotProps> = ({
             end={'0px'}
             shouldPlay={shouldPlayAnimations}>
             <Flex
+                flexDirection={['column', 'row']}
                 width='100%'
                 height='100%'
                 alignItems='center'

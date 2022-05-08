@@ -203,7 +203,7 @@ const Dapp: React.FC = () => {
         </> }
       </PurchaseModal>
       <RobotBadge ref={robotRef}/>
-      <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button>
+      {/* <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button> */}
       <Container position={'relative'} zIndex={1} maxW={'xl'} minHeight={'100vh'}>
         {pageContent}
       </Container>

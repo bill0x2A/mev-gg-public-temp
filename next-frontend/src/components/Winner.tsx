@@ -17,9 +17,15 @@ const Winner: React.FC<WinnerProps> = ({
         shouldPlay={shouldPlayAnimations}
         delay={6}
         transform={'translateY(-10px)'}>
-        <Flex data-tip={'Current winner'} alignItems={'center'}>
+        <Flex
+            data-tip={'Current winner'}
+            alignItems={'center'}
+            flexDirection={{
+                base: 'column',
+                sm: 'row',
+            }}>
             <Flex marginRight={'15px'}><Image src={crown} alt={'winner crown'}/></Flex>
-            <Text fontSize={'20px'} cursor={'default'}>{winnerText}</Text>
+            <Text fontSize={{ base: '4.5vw' ,sm: '20px'}} cursor={'default'}>{winnerText}</Text>
         </Flex>
     </OpacityAnimation>
 </Center>;

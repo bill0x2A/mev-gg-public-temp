@@ -16,8 +16,11 @@ const config = {
     initialColorMode: 'dark',
     useSystemColorMode: false,
     breakpoints: {
-        xs: '420px',
-        sm: '600px',
+        sm: '576px',
+        md: null,
+        lg: null,
+        xl: null,
+        '2xl': null,
     }
 }
   
