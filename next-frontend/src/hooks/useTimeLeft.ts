@@ -7,6 +7,7 @@ type UseTimeLeftReturnType = [string, (null | boolean)];
 
 export const useTimeLeft = (): UseTimeLeftReturnType => {
     const provider = useProvider();
+    const [hasGameStarted, setHasGameStarted] = React.useState(false);
     const [{
         data: gameHasStarted,
     }, readGameHasStarted] = useContractRead({
@@ -41,6 +42,11 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
         },
     )
 
+    React.useEffect(() => {
+        if(!!gameHasStarted)
+        setHasGameStarted(!!gameHasStarted);
+    }, [gameHasStarted])
+
     const [gameOver, setGameOver] = React.useState<boolean | null>(null);
     const [jsTimeLeft, setJsTimeLeft] = React.useState<number>();
 
@@ -65,12 +71,14 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
 
     React.useEffect(() => {
         setJsTimeLeft(timeLeft as unknown as number);
-        console.log(gameHasStarted);
+    }, [timeLeft]);
+
+    React.useEffect(() => {
         if (gameHasStarted) {
             const countdown = setInterval(countdownTimeByOneSecond, 1000);
             return () => clearInterval(countdown);
         }
-    }, [timeLeft]);
+    }, [hasGameStarted])
 
     const timeLeftText = React.useMemo<string>(() => {
         if (loading) return '...';
