@@ -4,12 +4,12 @@ import {
     useContract,
     useProvider,
   } from 'wagmi'
+import { useReward } from 'react-rewards';
 import {
   Box,
   Flex,
   Center,
   Container,
-  Button,
   Text,
   Link,
 } from '@chakra-ui/react';
@@ -54,21 +54,13 @@ const Dapp: React.FC = () => {
     signerOrProvider: provider,
   });
   const robotRef = React.useRef();
+  const { reward } = useReward('rewardId', 'confetti');
   const { winnerText, read: getWinner } = useWinner();
   const { read: getJackpot, jackpotText } = useJackpot();
   const [keyBalance, setKeyBalance] = React.useState<number>(0);
   const [dividend, setDividend] = React.useState<string>('');
-  const {
-    handleBuyKeys,
-    handleIncreaseKeys,
-    handleDecreaseKeys,
-    numberOfKeys,
-    txInProgress,
-    txHash,
-  } = useBuyKeys({
-    onSuccess: () => {},
-  });
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
+  const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<ethers.providers.TransactionResponse>();
   const shouldPlayAnimations = React.useMemo(() => {
     if (accountData?.address || userHasVisitedBefore) return false;
     return true;
@@ -105,19 +97,45 @@ const Dapp: React.FC = () => {
 
   const handleCloseModal = (): void => {
     setModalIsOpen(false);
+    setSuccessfulPurchaseData(undefined);
   };
 
   const navigateToFAQPage = (): void => {
     router.push('faq');
   };
 
-  const handleUserHasBoughtKey = (): void => {
+  const refreshChainDataAfterPurchase = (): void => {
     // Refresh data at intervals to prevent API call overloads
     getDividend();
     setTimeout(getKeysOwned, 500);
     setTimeout(getWinner, 1000);
     setTimeout(getJackpot, 1500);
   };
+
+  const handleKeyPurchaseSuccess = (data?: ethers.providers.TransactionResponse): void => {
+    if (!data) return;
+    console.log('running onSuccess handler');
+    console.dir(data);
+    setSuccessfulPurchaseData(data);
+    refreshChainDataAfterPurchase();
+    reward();
+  };
+
+  const handleKeyPurchaseError = (): void => {
+    setModalIsOpen(false);
+  };
+
+  const {
+    handleBuyKeys,
+    handleIncreaseKeys,
+    handleDecreaseKeys,
+    numberOfKeys,
+    txInProgress,
+    txHash,
+  } = useBuyKeys({
+    onSuccess: handleKeyPurchaseSuccess,
+    onError: handleKeyPurchaseError,
+  });
 
   const walletIsConnected = accountData && accountData.address;
   const userIsWinner = accountData && accountData.address === winnerText;
@@ -139,6 +157,7 @@ const Dapp: React.FC = () => {
 
   // Open the transaction modal when a purchase transaction begins.
   React.useEffect(() => {
+    console.log(txInProgress)
     if (txInProgress) {
       handleOpenModal();
     }
@@ -149,14 +168,20 @@ const Dapp: React.FC = () => {
   // Wallet connected state, game in progress
   if(!override) {
     pageContent = <>
-      <Center paddingBottom={'50px'} minHeight={'calc(100vh - 100px)'} flexDirection={'column'} position='relative' top={'100px'}>
+      <Center
+        paddingBottom={'50px'}
+        minHeight={'calc(100vh - 100px)'}
+        flexDirection={'column'}
+        position='relative'
+        top={'100px'}>
         <Box width={'100%'} marginTop='0px'>
           <Jackpot jackpotText={jackpotText} shouldPlayAnimations={shouldPlayAnimations}/>
           <Winner winnerText={winnerText} shouldPlayAnimations={shouldPlayAnimations}/>
           {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations}/>}
           {walletIsConnected && <Flex
             minWidth='220px'
-            flexDirection={{ base: 'column', sm: 'row'}} gap='10px'>
+            flexDirection={{ base: 'column', sm: 'row'}}
+            gap='10px'>
             <Card>
               <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
               <Dividends dividend={dividend} getDividend={getDividend}/>
@@ -181,9 +206,14 @@ const Dapp: React.FC = () => {
   if (override) {
     pageContent = <>
       <GameOver/>
-      {!walletIsConnected && <ConnectWallet shouldPlayAnimations={shouldPlayAnimations} delay={1}/>}
-      {walletIsConnected && <Flex minWidth='220px'
-              flexDirection={{ base: 'column-reverse', sm: 'row'}}  gap='10px' marginBottom={'50px'}>
+      {!walletIsConnected && <ConnectWallet
+        shouldPlayAnimations={shouldPlayAnimations}
+        delay={1}/>}
+      {walletIsConnected && <Flex
+        minWidth='220px'
+        flexDirection={{ base: 'column-reverse', sm: 'row'}}
+        gap='10px'
+        marginBottom={'50px'}>
         <Card>
           <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
           <Dividends dividend={dividend} getDividend={getDividend}/>
@@ -195,16 +225,30 @@ const Dapp: React.FC = () => {
 
   return (
     <>
-      <PurchaseModal closeModal={handleCloseModal} isOpen={modalIsOpen}>
-        { txInProgress || true && <>
-          <Text fontSize={'28px'}>Purchasing keys...</Text>
+      <PurchaseModal
+        closeModal={handleCloseModal} isOpen={modalIsOpen}>
+        <span id='rewardId'/>
+        {txInProgress && <>
+          <Text fontSize={'28px'}>{`Purchasing ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}...`}</Text>
           <KeyBadge isSpinning={true}/>
           {txHash && <Link outline={'none !important'} href={`https://rinkeby.etherscan.io/tx/${txHash}`}>View transaction on Etherscan</Link>}
-        </> }
+        </>}
+        {successfulPurchaseData && <>
+          <Text fontSize={'28px'}>{`Purchased ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}!`}</Text>
+          <KeyBadge/>
+          <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
+            <PrettyButton onClick={() => {}}>View on Opensea</PrettyButton>
+            <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
+          </Flex>
+        </>}
       </PurchaseModal>
       <RobotBadge ref={robotRef}/>
       {/* <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button> */}
-      <Container position={'relative'} zIndex={1} maxW={'xl'} minHeight={'100vh'}>
+      <Container
+        position={'relative'}
+        zIndex={1}
+        maxW={'xl'}
+        minHeight={'100vh'}>
         {pageContent}
       </Container>
       <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>
@@ -214,7 +258,7 @@ const Dapp: React.FC = () => {
         delayShow={100}
         delayHide={100}
         className={classes.tooltip}/>
-      </>
+    </>
   );
 }
 

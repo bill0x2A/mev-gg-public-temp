@@ -1,1 +1,1 @@
-export const keyPrice = 0.05;
+export const keyPrice = 0.01;

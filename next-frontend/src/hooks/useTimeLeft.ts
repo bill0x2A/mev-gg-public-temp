@@ -7,7 +7,19 @@ type UseTimeLeftReturnType = [string, (null | boolean)];
 
 export const useTimeLeft = (): UseTimeLeftReturnType => {
     const provider = useProvider();
-    const [{ data: timeLeft, error, loading }, read] = useContractRead({
+    const [{
+        data: gameHasStarted,
+    }, readGameHasStarted] = useContractRead({
+        addressOrName: contractAddress.MevGG,
+        contractInterface: MevGGArtifact.abi,
+        signerOrProvider: provider,
+    },
+        "gameHasStarted",
+        {
+            watch: false,
+    });
+
+    const [{ data: timeLeft, error, loading }, readTimeLeft] = useContractRead({
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
         signerOrProvider: provider,
@@ -23,7 +35,10 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
         contractInterface: MevGGArtifact.abi,  
         },
         'keysPurchased',
-        read,
+        () => {
+            readGameHasStarted();
+            readTimeLeft();
+        },
     )
 
     const [gameOver, setGameOver] = React.useState<boolean | null>(null);
@@ -34,7 +49,7 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
         const hours = Math.floor((seconds - (days * 86400)) / 3600);
         const minutes = Math.floor((seconds - (hours * 3600) - (days * 86400)) / 60);
         const secs = seconds - (hours * 3600) - (minutes * 60) - (days * 86400);
-        return (days !== 0 ? `${days}D` : '') + `${hours}H ${minutes}M ${secs}S`;
+        return (days !== 0 ? `${days}D ` : '') + `${hours}H ${minutes}M ${secs}S`;
     }
 
     const countdownTimeByOneSecond = (): void => {
@@ -50,8 +65,11 @@ export const useTimeLeft = (): UseTimeLeftReturnType => {
 
     React.useEffect(() => {
         setJsTimeLeft(timeLeft as unknown as number);
-        const countdown = setInterval(countdownTimeByOneSecond, 1000);
-        return () => clearInterval(countdown);
+        console.log(gameHasStarted);
+        if (gameHasStarted) {
+            const countdown = setInterval(countdownTimeByOneSecond, 1000);
+            return () => clearInterval(countdown);
+        }
     }, [timeLeft]);
 
     const timeLeftText = React.useMemo<string>(() => {

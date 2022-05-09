@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useToasts } from "react-toast-notifications";
+import { useToasts } from 'react-toast-notifications';
 
 export const useError = (error?: any) => {
     const { addToast } = useToasts();
@@ -9,7 +9,7 @@ export const useError = (error?: any) => {
             if (error.reason) {
                 addToast(error.reason, { appearance: 'error' })
             } else if (error.message) {
-                addToast(error.reason, { appearance: 'error' })
+                addToast(error.message, { appearance: 'error' })
             }
         }
     }, [error]);

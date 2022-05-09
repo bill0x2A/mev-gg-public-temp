@@ -3,18 +3,19 @@ import { useWaitForTransaction } from 'wagmi';
 
 export const useWait = (
     txHash: string | undefined,
-    successCallback: () => void,
+    successCallback: (data?: any) => void,
     errorCallback?: (error: Error) => any,
 ) => {
     const [{ data: waitingData, error, loading }] = useWaitForTransaction({
+        confirmations: 1,
         hash: txHash,
     });
 
     React.useEffect(() => {
-        if (!!waitingData) {
-            successCallback();
+        if (waitingData?.status === 1) {
+            successCallback(waitingData);
         }
-    }, [waitingData]);
+    }, [waitingData?.status]);
 
     React.useEffect(() => {
         if (!!error && !!errorCallback) {

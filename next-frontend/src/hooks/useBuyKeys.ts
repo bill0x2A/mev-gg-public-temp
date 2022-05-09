@@ -17,14 +17,20 @@ export const useBuyKeys = ({
 }: UseBuyKeysParams) => {
     const [numberOfKeys, setNumberOfKeys] = React.useState(1);
 
-    const [{ data, error, loading }, write] = useContractWrite({
+    const [{ data, error, loading: userIsConfirming }, write] = useContractWrite({
         addressOrName: contractAddress.MevGG,
         contractInterface: MevGGArtifact.abi,
     },
         "purchaseKeys",);
 
-    useWait(data?.hash, onSuccess, onError);
+    const { loading: txPending } = useWait(data?.hash, onSuccess, onError);
     useError(error);
+
+    React.useEffect(() => {
+        if (!!error && onError) {
+            onError(error);
+        }
+    }, [error])
 
     const handleIncreaseKeys = () => {
         setNumberOfKeys((numberOfKeys) => numberOfKeys + 1);
@@ -50,6 +56,6 @@ export const useBuyKeys = ({
         handleDecreaseKeys,
         numberOfKeys,
         txHash: data?.hash,
-        txInProgress: loading,
+        txInProgress: userIsConfirming || txPending,
     };
 };
