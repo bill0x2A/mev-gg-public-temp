@@ -22,6 +22,7 @@ contract MevGG is ERC721A {
     uint public startTime;
     uint public totalTime;
     uint public timeLeft;
+    bool public gameHasStarted;
 
     address winning;
     uint public balanceReceived;
@@ -72,6 +73,7 @@ contract MevGG is ERC721A {
         increment = _increment;
         keyPrice = _keyPrice;
         totalTime = block.timestamp + startTime;
+        gameHasStarted = false;
     }
 
     /**
@@ -79,6 +81,7 @@ contract MevGG is ERC721A {
      */
     function letTheGamesBegin() private {
         totalTime = block.timestamp + startTime;
+        gameHasStarted = true;
     }
 
     /**
