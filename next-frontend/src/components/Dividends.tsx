@@ -26,7 +26,7 @@ const Dividends: React.FC<DividendsProps> = ({
         "withdrawDivvies",
     );
 
-    useWait(data?.hash, getDividend);
+    const {loading: txLoading } = useWait(data?.hash, getDividend);
     useError(error);
 
     const claimButtonDisabled = Number(dividend) === 0;
@@ -48,7 +48,7 @@ const Dividends: React.FC<DividendsProps> = ({
         <Text marginBottom={'10px'} lineHeight={'22px'} borderBottom={'2px solid white'}>Claimable Dividends</Text>
         <Flex alignItems={'center'} justifyContent={'space-around'}>
             <Text>{dividend} ETH</Text>
-            <Button onClick={claimDividend} disabled={claimButtonDisabled}>{loading ? <Spinner size={'15px'}/> : 'Claim'}</Button>
+            <Button onClick={claimDividend} disabled={claimButtonDisabled}>{loading || txLoading ? <Spinner width={'15px'} height={'15px'}/> : 'Claim'}</Button>
         </Flex>
     </Box>
 };
