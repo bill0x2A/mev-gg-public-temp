@@ -43,6 +43,12 @@ import BackgroundGrid from '../components/BackgroundGrid';
 import { PrettyButton } from '../components/library';
 import classes from './styles/index.module.css';
 
+interface TxResponseWithLogs extends ethers.providers.TransactionResponse {
+  logs: Array<{
+    topics: Array<string>;
+  }>
+}
+
 const Dapp: React.FC = () => {
   const userHasVisitedBefore = useLocalStorage();
   const router = useRouter();
@@ -60,7 +66,7 @@ const Dapp: React.FC = () => {
   const [keyBalance, setKeyBalance] = React.useState<number>(0);
   const [dividend, setDividend] = React.useState<string>('');
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
-  const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<ethers.providers.TransactionResponse>();
+  const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<TxResponseWithLogs>();
   const shouldPlayAnimations = React.useMemo(() => {
     if (accountData?.address || userHasVisitedBefore) return false;
     return true;
@@ -68,6 +74,8 @@ const Dapp: React.FC = () => {
 
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
+  const firstPurchasedKeyId = successfulPurchaseData ? parseInt(successfulPurchaseData.logs[0].topics[3]) : '';
+  const openSeaLink = `https://testnets.opensea.io/assets/rinkeby/${contractAddress.MevGG}/${firstPurchasedKeyId}`;
 
   const getKeysOwned = async (): Promise<void> => {
       if (!accountData) return;
@@ -112,10 +120,8 @@ const Dapp: React.FC = () => {
     setTimeout(getJackpot, 1500);
   };
 
-  const handleKeyPurchaseSuccess = (data?: ethers.providers.TransactionResponse): void => {
+  const handleKeyPurchaseSuccess = (data?: TxResponseWithLogs): void => {
     if (!data) return;
-    console.log('running onSuccess handler');
-    console.dir(data);
     setSuccessfulPurchaseData(data);
     refreshChainDataAfterPurchase();
     reward();
@@ -133,7 +139,7 @@ const Dapp: React.FC = () => {
     txInProgress,
     txHash,
   } = useBuyKeys({
-    onSuccess: handleKeyPurchaseSuccess,
+    onSuccess: handleKeyPurchaseSuccess as any,
     onError: handleKeyPurchaseError,
   });
 
@@ -237,7 +243,15 @@ const Dapp: React.FC = () => {
           <Text fontSize={'28px'}>{`Purchased ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}!`}</Text>
           <KeyBadge/>
           <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
-            <PrettyButton onClick={() => {}}>View on Opensea</PrettyButton>
+            <PrettyButton onClick={() => {window.open(openSeaLink)}}>View on Opensea</PrettyButton>
+            <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
+          </Flex>
+        </>}
+        {!successfulPurchaseData && !txInProgress && <>
+          <Text fontSize={'28px'}>{'Something went wrong...'}</Text>
+          <KeyBadge isSpinning={false}/>
+          <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
+            {txHash && <Link outline={'none !important'} href={`https://rinkeby.etherscan.io/tx/${txHash}`}>View transaction on Etherscan</Link>}
             <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
           </Flex>
         </>}

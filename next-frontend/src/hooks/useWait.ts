@@ -12,10 +12,10 @@ export const useWait = (
     });
 
     React.useEffect(() => {
-        if (waitingData?.status === 1) {
+        if (waitingData?.status === 1 && !loading) {
             successCallback(waitingData);
         }
-    }, [waitingData?.status]);
+    }, [waitingData?.status, loading]);
 
     React.useEffect(() => {
         if (!!error && !!errorCallback) {
