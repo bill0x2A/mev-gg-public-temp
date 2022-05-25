@@ -9,7 +9,7 @@ import {
 import { useError, useWait } from '../hooks';
 
 interface DividendsProps {
-    dividend: string;
+    dividend: number | string;
     getDividend: () => void;
 }
 
@@ -31,6 +31,8 @@ const Dividends: React.FC<DividendsProps> = ({
 
     const claimButtonDisabled = Number(dividend) === 0;
 
+    const dividendText = claimButtonDisabled ? '0' : Number(dividend).toFixed(5);
+
     const claimDividend = async (): Promise<void> => {
         if (!accountData) return;
         try {
@@ -47,7 +49,7 @@ const Dividends: React.FC<DividendsProps> = ({
     return <Box>
         <Text marginBottom={'10px'} lineHeight={'22px'} borderBottom={'2px solid white'}>Claimable Dividends</Text>
         <Flex alignItems={'center'} justifyContent={'space-around'}>
-            <Text>{dividend} ETH</Text>
+            <div data-tip={`${dividend} ETH`}><Text>{dividendText} ETH</Text></div>
             <Button onClick={claimDividend} disabled={claimButtonDisabled}>{loading || txLoading ? <Spinner width={'15px'} height={'15px'}/> : 'Claim'}</Button>
         </Flex>
     </Box>

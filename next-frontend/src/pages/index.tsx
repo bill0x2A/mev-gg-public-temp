@@ -64,7 +64,7 @@ const Dapp: React.FC = () => {
   const { winnerText, read: getWinner } = useWinner();
   const { read: getJackpot, jackpotText } = useJackpot();
   const [keyBalance, setKeyBalance] = React.useState<number>(0);
-  const [dividend, setDividend] = React.useState<string>('');
+  const [dividend, setDividend] = React.useState<number | string>('');
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<TxResponseWithLogs>();
   const shouldPlayAnimations = React.useMemo(() => {
@@ -92,7 +92,7 @@ const Dapp: React.FC = () => {
     if (!accountData) return;
     try {
         const _dividend = await contract.getClaimableDivvies(accountData.address);
-        const formattedDividend = Number(ethers.utils.formatEther(_dividend)).toFixed(5);
+        const formattedDividend = Number(ethers.utils.formatEther(_dividend));
         setDividend(formattedDividend);
     } catch(e) {
         console.log(e);
