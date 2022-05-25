@@ -3,15 +3,15 @@
 pragma solidity ^0.8.13;
 
 import "hardhat/console.sol";
-import "erc721a/contracts/ERC721A.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import './Renderer.sol';
+import "./CustomERC721A.sol";
 
 
 /**
  * @title A MEV game
 */
-contract MevGG is ERC721A {
+contract MevGG is CustomERC721A {
     using Strings for uint256;
 
     // Store renderer as separate contract so we can update it if needed
@@ -63,7 +63,7 @@ contract MevGG is ERC721A {
     /// @notice Thrown if developer percentage is claimed by a player that is not the developer
 	error NotDeveloper();
 
-    constructor(uint _startTime, uint _increment, uint _keyPrice) ERC721A("mevgg", unicode"♞") {
+    constructor(uint _startTime, uint _increment, uint _keyPrice) CustomERC721A("mevgg", unicode"♞") {
         /**
         * @notice developer address is used to withdraw 1% depending on the outcome
         * of the vote. Developer address has NO more privileges than any other address.  
@@ -103,7 +103,7 @@ contract MevGG is ERC721A {
      * @notice If multiple key purchases are made a the end of the game, 
      * the winner will be the address who gets included FIRST in the game ending block.
     */
-    function purchaseKeys(uint _numKeys) public payable {
+    function purchaseKeys(uint _numKeys) public payable returns (uint256) {
         /// @notice Not sure why anyone would, but you can't buy keys after the game ends.
         if (getTimeLeft() == 0) revert WinnerAlreadyDeclared();
         if (msg.value != keyPrice*_numKeys) revert WrongPaymentAmount();
@@ -126,9 +126,9 @@ contract MevGG is ERC721A {
 
         winning = msg.sender;
         
-        _safeMint(msg.sender, _numKeys);
-        
+        uint256 firstTokenId = _safeMint(msg.sender, _numKeys);
         emit keysPurchased(_numKeys, winning);
+        return firstTokenId;
 
     } 
     /**
