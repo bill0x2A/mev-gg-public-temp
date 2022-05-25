@@ -17,3 +17,4 @@ export { default as YouWon } from './YouWon';
 export { default as RobotBadge } from './RobotBadge';
 export { default as KeyBadge } from './KeyBadge';
 export { default as PurchaseModal } from './PurchaseModal';
+export { default as ChainBanner } from './ChainBanner';

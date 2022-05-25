@@ -3,6 +3,7 @@ import {
     useAccount,
     useContract,
     useProvider,
+    useNetwork,
   } from 'wagmi'
 import { useReward } from 'react-rewards';
 import {
@@ -28,11 +29,13 @@ import {
   RobotBadge,
   PurchaseModal,
   KeyBadge,
+  ChainBanner,
 } from '../components';
 import { ethers } from 'ethers';
 import ReactTooltip from 'react-tooltip'
 import contractAddress from "../contracts/mevgg-contract-address.json";
 import MevGGArtifact from "../contracts/MevGG.json";
+import { defaultChain } from '../pages/_app';
 import {
     useJackpot,
     useWinner,
@@ -53,6 +56,7 @@ const Dapp: React.FC = () => {
   const userHasVisitedBefore = useLocalStorage();
   const router = useRouter();
   const [{ data: accountData }] = useAccount();
+  const [{ data: { chain } }] = useNetwork();
   const provider = useProvider();
   const contract = useContract({
     addressOrName: contractAddress.MevGG,
@@ -130,6 +134,8 @@ const Dapp: React.FC = () => {
   const handleKeyPurchaseError = (): void => {
     setModalIsOpen(false);
   };
+
+  const incorrectChainSelected = !!chain && (defaultChain.id !== chain.id);
 
   const {
     handleBuyKeys,
@@ -230,49 +236,52 @@ const Dapp: React.FC = () => {
   }
 
   return (
-    <>
-      <PurchaseModal
-        closeModal={handleCloseModal} isOpen={modalIsOpen}>
-        <span id='rewardId'/>
-        {txInProgress && <>
-          <Text fontSize={'28px'}>{`Purchasing ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}...`}</Text>
-          <KeyBadge isSpinning={true}/>
-          {txHash && <Link outline={'none !important'} href={`https://rinkeby.etherscan.io/tx/${txHash}`}>View transaction on Etherscan</Link>}
-        </>}
-        {successfulPurchaseData && <>
-          <Text fontSize={'28px'}>{`Purchased ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}!`}</Text>
-          <KeyBadge/>
-          <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
-            <PrettyButton onClick={() => {window.open(openSeaLink)}}>View on Opensea</PrettyButton>
-            <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
-          </Flex>
-        </>}
-        {!successfulPurchaseData && !txInProgress && <>
-          <Text fontSize={'28px'}>{'Something went wrong...'}</Text>
-          <KeyBadge isSpinning={false}/>
-          <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
+    <div>
+      <ChainBanner incorrectChain={incorrectChainSelected}/>
+      <Box paddingTop={incorrectChainSelected ? '30px' : '0px'}>
+        <PurchaseModal
+          closeModal={handleCloseModal} isOpen={modalIsOpen}>
+          <span id='rewardId'/>
+          {txInProgress && <>
+            <Text fontSize={'28px'}>{`Purchasing ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}...`}</Text>
+            <KeyBadge isSpinning={true}/>
             {txHash && <Link outline={'none !important'} href={`https://rinkeby.etherscan.io/tx/${txHash}`}>View transaction on Etherscan</Link>}
-            <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
-          </Flex>
-        </>}
-      </PurchaseModal>
-      <RobotBadge ref={robotRef}/>
-      {/* <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button> */}
-      <Container
-        position={'relative'}
-        zIndex={1}
-        maxW={'xl'}
-        minHeight={'100vh'}>
-        {pageContent}
-      </Container>
-      <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>
-      <ReactTooltip
-        border
-        effect='solid'
-        delayShow={100}
-        delayHide={100}
-        className={classes.tooltip}/>
-    </>
+          </>}
+          {successfulPurchaseData && <>
+            <Text fontSize={'28px'}>{`Purchased ${numberOfKeys > 1 ? `${numberOfKeys} keys` : 'key'}!`}</Text>
+            <KeyBadge/>
+            <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
+              <PrettyButton onClick={() => {window.open(openSeaLink)}}>View on Opensea</PrettyButton>
+              <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
+            </Flex>
+          </>}
+          {!successfulPurchaseData && !txInProgress && <>
+            <Text fontSize={'28px'}>{'Something went wrong...'}</Text>
+            <KeyBadge isSpinning={false}/>
+            <Flex gap='10px' flexDirection='column' justifyContent={'space-around'}>
+              {txHash && <Link outline={'none !important'} href={`https://rinkeby.etherscan.io/tx/${txHash}`}>View transaction on Etherscan</Link>}
+              <PrettyButton onClick={handleCloseModal}>Close</PrettyButton>
+            </Flex>
+          </>}
+        </PurchaseModal>
+        <RobotBadge incorrectChain={incorrectChainSelected} ref={robotRef}/>
+        {/* <Button onClick={handleOverrideSwitch} position={'absolute'} top={2} right={2}>[DEV] Game Over Toggle</Button> */}
+        <Container
+          position={'relative'}
+          zIndex={1}
+          maxW={'xl'}
+          height={incorrectChainSelected ? 'calc(100vh - 30px)' : '100vh'}>
+          {pageContent}
+        </Container>
+        <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>
+        <ReactTooltip
+          border
+          effect='solid'
+          delayShow={100}
+          delayHide={100}
+          className={classes.tooltip}/>
+      </Box>
+    </div>
   );
 }
 

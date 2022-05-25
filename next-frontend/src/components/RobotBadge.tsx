@@ -11,7 +11,8 @@ import { useRouter } from 'next/router';
 import robot from '../assets/images/robot.svg';
 import circle from '../assets/images/bigcircle.svg';
 
-const RobotBadge = forwardRef(({}, ref) => {
+
+const RobotBadge = forwardRef(({ incorrectChain }, ref) => {
     const router = useRouter();
     const spin = keyframes`
         from { transform: rotate(-7deg); }
@@ -21,9 +22,12 @@ const RobotBadge = forwardRef(({}, ref) => {
         to { opacity: 1; }`;
     const spinAnimation = `${spin} infinite 1.1s ease-in-out alternate`;
     const fadeAnimation = `${fade} infinite 0.5s ease-in-out alternate`;
+
     const handleClickRobot = () => {
         router.push('sample-mev-bot-code');
     };
+
+    console.log(incorrectChain);
 
     return <>
         <Center
@@ -31,7 +35,7 @@ const RobotBadge = forwardRef(({}, ref) => {
             zIndex={10}
             data-tip='View sample MEV bot code'
             position='absolute'
-            top={'10px'}
+            top={incorrectChain ? '40px' : '10px'}
             left={'10px'}
             borderRadius={'100%'}
             onClick={handleClickRobot}

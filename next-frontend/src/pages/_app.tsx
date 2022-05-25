@@ -20,7 +20,7 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID as string
 
 // Pick chains
 const chains = defaultChains
-const defaultChain = chain.rinkeby
+export const defaultChain = chain.rinkeby
 
 // Set up connectors
 type ConnectorsConfig = { chainId?: number }
