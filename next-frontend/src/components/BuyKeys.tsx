@@ -13,6 +13,7 @@ interface BuyKeysProps {
     handleDecreaseKeys: () => void;
     isBuyingKey?: boolean;
     numberOfKeys: number;
+    incorrectChainSelected: boolean;
 }
 
 export const BuyKeys: React.FC<BuyKeysProps> = ({
@@ -21,6 +22,7 @@ export const BuyKeys: React.FC<BuyKeysProps> = ({
     handleDecreaseKeys,
     isBuyingKey,
     numberOfKeys,
+    incorrectChainSelected,
 }: BuyKeysProps) => {
     return (
         <Card>
@@ -45,7 +47,7 @@ export const BuyKeys: React.FC<BuyKeysProps> = ({
             </Flex>
             <Flex alignItems={'center'} gap={'15px'}>
                 <Text>{`${(keyPrice * numberOfKeys).toFixed(2)} ETH`}</Text>
-                <Button disabled={isBuyingKey} onClick={handleBuyKeys}>{isBuyingKey ? <Spinner/> : 'Buy'}</Button>
+                <Button disabled={isBuyingKey || incorrectChainSelected} onClick={handleBuyKeys}>{isBuyingKey ? <Spinner/> : 'Buy'}</Button>
             </Flex>
             <PileOfKeys number={numberOfKeys}/>
         </Card>

@@ -71,7 +71,7 @@ const Dapp: React.FC = () => {
   const [dividend, setDividend] = React.useState<number | string>('');
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<TxResponseWithLogs>();
-  const shouldPlayAnimations = !!accountData?.address || !userHasVisitedBefore;
+  const shouldPlayAnimations = !(userHasVisitedBefore || !!accountData?.address);
 
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
@@ -192,15 +192,21 @@ const Dapp: React.FC = () => {
             flexDirection={{ base: 'column', sm: 'row'}}
             gap='10px'>
             <Card>
-              <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
-              <Dividends dividend={dividend} getDividend={getDividend}/>
+              <OwnedKeys
+                keyBalance={keyBalance}
+                getKeysOwned={getKeysOwned}/>
+              <Dividends
+                incorrectChainSelected={incorrectChainSelected}
+                dividend={dividend}
+                getDividend={getDividend}/>
             </Card>
             <BuyKeys
               handleBuyKeys={handleBuyKeys}
               handleDecreaseKeys={handleDecreaseKeys}
               handleIncreaseKeys={handleIncreaseKeys}
               isBuyingKey={txInProgress}
-              numberOfKeys={numberOfKeys}/>
+              numberOfKeys={numberOfKeys}
+              incorrectChainSelected={incorrectChainSelected}/>
           </Flex>}
           <Flex margin={'10px auto'} justifyContent='center' gap='10px'>
             <PrettyButton onClick={navigateToFAQPage}>FAQ</PrettyButton>
@@ -225,7 +231,7 @@ const Dapp: React.FC = () => {
         marginBottom={'50px'}>
         <Card>
           <OwnedKeys keyBalance={keyBalance} getKeysOwned={getKeysOwned}/>
-          <Dividends dividend={dividend} getDividend={getDividend}/>
+          <Dividends incorrectChainSelected={incorrectChainSelected} dividend={dividend} getDividend={getDividend}/>
         </Card>
         {userIsWinner && <YouWon/>}
       </Flex>}

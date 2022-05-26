@@ -11,11 +11,13 @@ import { useError, useWait } from '../hooks';
 interface DividendsProps {
     dividend: number | string;
     getDividend: () => void;
+    incorrectChainSelected: boolean;
 }
 
 const Dividends: React.FC<DividendsProps> = ({
     dividend,
     getDividend,
+    incorrectChainSelected,
 }: DividendsProps) => {
     const [{ data: accountData }] = useAccount();
 
@@ -29,7 +31,7 @@ const Dividends: React.FC<DividendsProps> = ({
     const {loading: txLoading } = useWait(data?.hash, getDividend);
     useError(error);
 
-    const claimButtonDisabled = Number(dividend) === 0;
+    const claimButtonDisabled = Number(dividend) === 0 || incorrectChainSelected;
 
     const dividendText = claimButtonDisabled ? '0' : Number(dividend).toFixed(5);
 

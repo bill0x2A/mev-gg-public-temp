@@ -139,7 +139,7 @@ contract MevGG is CustomERC721A {
     }
 
     /**
-     * @dev returns which address is currently winning. 
+     * @dev returns the total number of keys purchased so far. 
     */
     function getTotalKeysPurchased() public view returns(uint) {
         return totalKeys;
