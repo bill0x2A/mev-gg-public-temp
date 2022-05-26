@@ -27,7 +27,6 @@ const ChainBanner: React.FC<ChainBanner> = ({ incorrectChain }: ChainBanner) => 
         });
     };
 
-    console.log(incorrectChain, chain);
     if (!incorrectChain) {
         return null;
     }
@@ -39,13 +38,24 @@ const ChainBanner: React.FC<ChainBanner> = ({ incorrectChain }: ChainBanner) => 
         position={'absolute'}
         width={'100vw'}
         maxWidth={'100%'}
+        fontSize={'20px'}
         color={'white'}
         height={'30px'}
         top={'0px'}
         borderTop={'2px solid white'}
         borderBottom={'2px solid white'}>
-        <Text><strong>Network | </strong>{`You are connected to ${chain?.name}, please `}</Text>
-        <Button onClick={connectToDefaultChain}>{`switch to ${defaultChain.name}`}</Button>
+        <Text display={['none', 'none', 'block']}><strong>Network | </strong>{`You are connected to ${chain?.name}, please `}</Text>
+        <Button
+            lineHeight={'18px'}
+            px={'8px'}
+            fontSize={'18px'}
+            borderRadius={[0, 0, '150px']}
+            height={['100%', '100%', '18px']}
+            marginLeft={[0,0,'5px']}
+            width={['100%', '100%', 'initial']}
+            onClick={connectToDefaultChain}>
+            {`switch to ${defaultChain.name}`}
+        </Button>
     </Flex>
 }
 

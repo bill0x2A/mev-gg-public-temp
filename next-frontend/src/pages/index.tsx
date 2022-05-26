@@ -71,10 +71,7 @@ const Dapp: React.FC = () => {
   const [dividend, setDividend] = React.useState<number | string>('');
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<TxResponseWithLogs>();
-  const shouldPlayAnimations = React.useMemo(() => {
-    if (accountData?.address || userHasVisitedBefore) return false;
-    return true;
-  }, [accountData]); // this might cause a bug, check this out
+  const shouldPlayAnimations = !!accountData?.address || !userHasVisitedBefore;
 
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
@@ -182,7 +179,7 @@ const Dapp: React.FC = () => {
     pageContent = <>
       <Center
         paddingBottom={'50px'}
-        minHeight={'calc(100vh - 100px)'}
+        minHeight={incorrectChainSelected ? 'calc(100vh - 130px)' : 'calc(100vh - 100px)'}
         flexDirection={'column'}
         position='relative'
         top={'100px'}>

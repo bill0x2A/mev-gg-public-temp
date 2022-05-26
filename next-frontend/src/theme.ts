@@ -11,6 +11,10 @@ const config = {
     components: {
         Button: {
             background: 'none',
+            _focus: {
+                outline: 'none',
+                boxShadow: 'none',
+            }
         },
     },
     initialColorMode: 'dark',

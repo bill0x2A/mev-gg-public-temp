@@ -40,7 +40,7 @@ export const Connect: React.FC<ConnectProps> = ({
 
   return (
       <Flex justifyContent={'space-between'}>
-        {connectors.map((connector) => {
+        {connectors.filter(c => c.ready).map((connector) => {
            const image = getConnectorImageSrc(connector);
            return <Button
               borderRadius={'none'}
