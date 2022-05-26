@@ -13,6 +13,7 @@ import {
   Container,
   Text,
   Link,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import {
@@ -54,6 +55,9 @@ interface TxResponseWithLogs extends ethers.providers.TransactionResponse {
 
 const Dapp: React.FC = () => {
   const userHasVisitedBefore = useLocalStorage();
+  const [isMobile] = useMediaQuery('(max-width: 600px)');
+  const [isDummyThicc] = useMediaQuery('(min-width: 2700px)');
+  const shouldShowBackgroundGrid = !(isMobile || isDummyThicc);
   const router = useRouter();
   const [{ data: accountData }] = useAccount();
   const [{ data: { chain } }] = useNetwork();
@@ -276,7 +280,7 @@ const Dapp: React.FC = () => {
           height={incorrectChainSelected ? 'calc(100vh - 30px)' : '100vh'}>
           {pageContent}
         </Container>
-        <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>
+        {shouldShowBackgroundGrid && <BackgroundGrid top={'calc(100vh - 300px)'} left={0}/>}
         <ReactTooltip
           border
           effect='solid'
