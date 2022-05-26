@@ -75,7 +75,7 @@ const Dapp: React.FC = () => {
   const [dividend, setDividend] = React.useState<number | string>('');
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [successfulPurchaseData, setSuccessfulPurchaseData] = React.useState<TxResponseWithLogs>();
-  const shouldPlayAnimations = !(userHasVisitedBefore || !!accountData?.address);
+  const shouldPlayAnimations = false;
 
   // DEV, REMOVE FOR PROD
   const [override, setOverride] = React.useState(false);
