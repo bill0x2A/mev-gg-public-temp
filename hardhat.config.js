@@ -29,12 +29,12 @@ module.exports = {
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:
-        process.env.DEPLOYER_PRIVATE_KEY !== undefined ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
+        process.env.DEPLOYER2_PRIVATE_KEY !== undefined ? [process.env.DEPLOYER2_PRIVATE_KEY] : [],
     },
     rinkeby: {
       url: process.env.RINKEBY_URL || "",
       accounts:
-        process.env.DEPLOYER_PRIVATE_KEY !== undefined ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
+        process.env.DEPLOYER2_PRIVATE_KEY !== undefined ? [process.env.DEPLOYER2_PRIVATE_KEY] : [],
     },
   },
   gasReporter: {

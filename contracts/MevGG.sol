@@ -5,27 +5,23 @@ pragma solidity ^0.8.13;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import './Renderer.sol';
-import "./CustomERC721A.sol";
-
+import "erc721a/contracts/ERC721A.sol";
 
 /**
  * @title A MEV game
 */
-contract MevGG is CustomERC721A {
+contract MevGG is ERC721A {
     using Strings for uint256;
 
     // Store renderer as separate contract so we can update it if needed
     Renderer public renderer;
 
     address public developer;
-    uint public giveToJackpot;
     uint public startTime;
     uint public totalTime;
-    uint public timeLeft;
     bool public gameHasStarted;
 
     address winning;
-    uint public balanceReceived;
     uint public keyPrice = 0 wei;
     uint public multiplier = 100;
     uint public increment;
@@ -34,9 +30,7 @@ contract MevGG is CustomERC721A {
     uint public divPool;
     uint public jackpot;
     uint public counter;
-    uint public developerOnePercent;
-    uint public giveToDeveloper;
-    // string private baseURI = "baseUri";
+    uint public developerPercent;
     
     struct Divvies {
         uint _keyBalance;
@@ -63,7 +57,7 @@ contract MevGG is CustomERC721A {
     /// @notice Thrown if developer percentage is claimed by a player that is not the developer
 	error NotDeveloper();
 
-    constructor(uint _startTime, uint _increment, uint _keyPrice) CustomERC721A("mevgg", unicode"♞") {
+    constructor(uint _startTime, uint _increment, uint _keyPrice) ERC721A("mevgg", unicode"♞") {
         /**
         * @notice developer address is used to withdraw 1% depending on the outcome
         * of the vote. Developer address has NO more privileges than any other address.  
@@ -97,6 +91,7 @@ contract MevGG is CustomERC721A {
         }
         return 0;
     }
+
     /**
      * @dev holds a logic for key price increase, adding time per key,
      * updating player's key balance, allocating funds, and setting the current winning player.
@@ -112,10 +107,11 @@ contract MevGG is CustomERC721A {
         uint devShare = devShareNumerator/10000;
         uint gameShare = msg.value - devShare;
         uint floor = gameShare/2;
-        developerOnePercent += devShare;
+        developerPercent += devShare;
         jackpot += floor;
         divPool += gameShare - floor; 
         divTracker[msg.sender]._keyBalance += _numKeys;
+        uint256 _firstPurchasedTokenId = totalKeys + 1;
         totalKeys += _numKeys;
         /// @notice In case the game has a slow start (no players), or the clock goes over 24 hours, set the clock to 24 hours.
         if (_numKeys * increment > startTime - (totalTime-block.timestamp) || (totalKeys < 5)) {
@@ -126,11 +122,11 @@ contract MevGG is CustomERC721A {
 
         winning = msg.sender;
         
-        uint256 firstTokenId = _safeMint(msg.sender, _numKeys);
+        _safeMint(msg.sender, _numKeys);
         emit keysPurchased(_numKeys, winning);
-        return firstTokenId;
+        return _firstPurchasedTokenId;
+    }
 
-    } 
     /**
      * @dev returns which address is currently winning. 
     */
@@ -161,6 +157,7 @@ contract MevGG is CustomERC721A {
         claimableDivvies = tempNumerator/totalKeys - divTracker[_userAddress]._withdrawnAmount;
         return claimableDivvies;
     }
+
     /**
      * @dev Withdraw caller's dividends
     */
@@ -204,12 +201,12 @@ contract MevGG is CustomERC721A {
     /**
      * @notice The developer can call this function IFF the game is over.
     */
-    function developerOnePercentAllocation(address _developerAddress) public {
+    function developerPercentAllocation(address _developerAddress) public {
         if (msg.sender != developer) revert NotDeveloper();
         if (getTimeLeft() != 0) revert GameActive();
         address payable to = payable(_developerAddress);
-        to.transfer(developerOnePercent);
-        developerOnePercent = 0;
+        to.transfer(developerPercent);
+        developerPercent = 0;
     }
     
     /**

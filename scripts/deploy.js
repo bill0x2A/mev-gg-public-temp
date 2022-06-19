@@ -18,7 +18,7 @@ async function main() {
   await renderer.deployed();
   console.log("Renderer deployed to:", renderer.address);
 
-  const initialKeyPrice = ethers.BigNumber.from('50000000000000000');
+  const initialKeyPrice = ethers.BigNumber.from('10000000000000000');
   console.log(initialKeyPrice);
   const startTime = 86400;
   const increment = 30;
